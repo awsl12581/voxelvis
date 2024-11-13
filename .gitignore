@@ -1,0 +1,7 @@
+__pycache__
+.venv
+.vs
+build
+out
+3rdparty
+imgui.ini
