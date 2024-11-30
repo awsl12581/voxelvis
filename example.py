@@ -2,9 +2,9 @@ import sys
 
 sys.path.append("./build")
 
-import teavoxelui as example
+from teavoxelui import TeaVis
 
-obj = example.TeaVis(10)
+obj = TeaVis(10)
 
 print(obj.check_normal())
 

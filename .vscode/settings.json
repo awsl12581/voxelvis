@@ -82,5 +82,8 @@
         "variant": "cpp",
         "xtree": "cpp"
     },
-    "python.analysis.autoImportCompletions": true
+    "python.analysis.autoImportCompletions": true,
+    "python.analysis.extraPaths": [
+        "./build"
+    ]
 }

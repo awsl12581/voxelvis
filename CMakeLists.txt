@@ -74,22 +74,19 @@ add_executable(my_app main.cpp src/voxelvis.cpp src/instance.cpp src/common.cpp 
 # add_library(teavoxelui SHARED src/example.cpp)
 # target_link_libraries(teavoxelui pybind11::module)
 # cmake方式打包pybind11
+
 pybind11_add_module(teavoxelui example.cpp src/voxelvis.cpp src/instance.cpp src/common.cpp src/camera.cpp src/auxgrid.cpp)
+
 
 # TODO 彻底搞清public private
 target_link_libraries(my_app PRIVATE ${VOXELVIS_Libs})
 # TODO target_link_libraries的用处为什么会联系上include
 target_link_libraries(teavoxelui PRIVATE ${VOXELVIS_Libs})
 
-
-
-# Python 包打包指令，调用 setup.py
-# add_custom_target(python_package ALL
-#     COMMAND ${CMAKE_COMMAND} -E env
-#     PYTHONPATH=${CMAKE_CURRENT_BINARY_DIR}
-#     ${Python_EXECUTABLE} setup.py build_ext --inplace
-#     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-#     COMMENT "Building Python package"
-# )
-# # 依赖关系
-# add_dependencies(python_package example_module)
+ 
+add_custom_command(TARGET teavoxelui POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E env PYTHONPATH=${CMAKE_CURRENT_BINARY_DIR}
+    ${Python_EXECUTABLE} -m pybind11_stubgen teavoxelui --output ${CMAKE_CURRENT_BINARY_DIR}
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+    COMMENT "Generating .pyi file for teavoxelui"
+)
