@@ -2,12 +2,9 @@
 int main()
 {
     vis::voxel::display_vox display;
-    
-    //std::thread([&]()
-                //{/* */
-            display.voxel_init();
-            display.voxel_loop(); 
-        //.join();
+
+    display.voxel_init();
+    display.voxel_loop();
 
     return 0;
 }

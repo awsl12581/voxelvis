@@ -71,15 +71,15 @@ include_directories(src)
 add_executable(my_app main.cpp src/voxelvis.cpp src/instance.cpp src/common.cpp src/camera.cpp src/auxgrid.cpp)
 
 # 添加动态库
-# add_library(example_module SHARED src/example.cpp)
-# target_link_libraries(example_module pybind11::module)
+# add_library(teavoxelui SHARED src/example.cpp)
+# target_link_libraries(teavoxelui pybind11::module)
 # cmake方式打包pybind11
-pybind11_add_module(example_module example.cpp src/voxelvis.cpp src/instance.cpp src/common.cpp src/camera.cpp src/auxgrid.cpp)
+pybind11_add_module(teavoxelui example.cpp src/voxelvis.cpp src/instance.cpp src/common.cpp src/camera.cpp src/auxgrid.cpp)
 
 # TODO 彻底搞清public private
 target_link_libraries(my_app PRIVATE ${VOXELVIS_Libs})
 # TODO target_link_libraries的用处为什么会联系上include
-target_link_libraries(example_module PRIVATE ${VOXELVIS_Libs})
+target_link_libraries(teavoxelui PRIVATE ${VOXELVIS_Libs})
 
 
 

@@ -2,7 +2,7 @@ import sys
 
 sys.path.append("./build")
 
-import example_module as example
+import teavoxelui as example
 
 obj = example.TeaVis(10)
 

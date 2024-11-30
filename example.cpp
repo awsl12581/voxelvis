@@ -22,10 +22,11 @@ public:
     }
     int loop()
     {
-        std::thread([&]()
-                    { display.voxel_loop(); })
-            .join();
-        // display.voxel_loop();
+        // std::thread([&]()
+        //             { display.voxel_loop(); })
+
+        //     .join();
+        display.voxel_loop();
         return 0;
     }
 
@@ -58,7 +59,7 @@ void process_data(pybind11::array_t<double> input_array)
     data_mutex.unlock();
 };
 
-PYBIND11_MODULE(example_module, m)
+PYBIND11_MODULE(teavoxelui, m)
 {
     pybind11::class_<TeaVis>(m, "TeaVis")
         .def(pybind11::init<int>())

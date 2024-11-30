@@ -57,7 +57,7 @@ GLuint vis::common::CreateShaderProgram(const char *vert, const char *frag)
     glShaderSource(fShader, 1, &frag, NULL);
 
     std::cout << "编译顶点着色器" << std::endl;
-    glCompileShader(vShader); 
+    glCompileShader(vShader);
     CheckOpenGLError();
     glGetShaderiv(vShader, GL_COMPILE_STATUS, &vertCompiled);
     if (vertCompiled != 1)
@@ -109,5 +109,22 @@ GLuint vis::common::CompileComputeShader(const char *shaderSource)
         std::cerr << "Compute Shader Compilation Failed:\n"
                   << infoLog << std::endl;
     }
-    return shader;
+
+    // 创建计算着色器程序对象并链接
+    GLuint computeProgram = glCreateProgram();
+    glAttachShader(computeProgram, shader);
+    glLinkProgram(computeProgram);
+
+    // 检查程序链接错误
+    glGetProgramiv(computeProgram, GL_LINK_STATUS, &success);
+    if (success != GL_TRUE)
+    {
+        char buffer[512];
+        glGetProgramInfoLog(computeProgram, 512, NULL, buffer);
+        std::cerr << "Compute program linking error: " << buffer << std::endl;
+    }
+
+    // 清理着色器对象，程序已经链接成功，不再需要单独的着色器对象
+    glDeleteShader(shader);
+    return computeProgram;
 }
