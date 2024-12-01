@@ -80,10 +80,15 @@
         "unordered_set": "cpp",
         "valarray": "cpp",
         "variant": "cpp",
-        "xtree": "cpp"
+        "xtree": "cpp",
+        "any": "cpp",
+        "condition_variable": "cpp",
+        "csignal": "cpp",
+        "span": "cpp"
     },
     "python.analysis.autoImportCompletions": true,
     "python.analysis.extraPaths": [
         "./build"
-    ]
+    ],
+    "cmake.outputLogEncoding": "gbk"
 }

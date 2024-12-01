@@ -2,15 +2,12 @@ cmake_minimum_required(VERSION 3.22)
 
 project(voxelvis)
 
+enable_testing()
+
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON )
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS ON)
-
-if(MSVC)
-    add_compile_options("/source-charset:utf-8")
-    add_compile_options("/execution-charset:gbk")
-endif(MSVC)
 
 # opengl 460
 find_package(OpenGL REQUIRED)
@@ -36,6 +33,8 @@ set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(GLM_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 set(GLM_ENABLE_CXX_17 ON CACHE BOOL "" FORCE)
+# test
+add_subdirectory(tests)
 # glfw
 add_subdirectory(3rdparty/glfw)
 # glad
@@ -67,19 +66,24 @@ set(VOXELVIS_Libs OpenGL::GL glfw glad glm::glm ${Python_LIBRARIES} imgui)
 ########################################################################
 
 include_directories(src)
+
+# 不要在库编译前设置，除非必须，直接在项目编译前加即可
+if(MSVC)
+    add_compile_options("/source-charset:utf-8")
+    add_compile_options("/execution-charset:gbk")
+endif(MSVC)
+
 # vis app
 add_executable(my_app main.cpp src/voxelvis.cpp src/instance.cpp src/common.cpp src/camera.cpp src/auxgrid.cpp)
+# TODO 彻底搞清public private
+target_link_libraries(my_app PRIVATE ${VOXELVIS_Libs})
 
 # 添加动态库
 # add_library(teavoxelui SHARED src/example.cpp)
 # target_link_libraries(teavoxelui pybind11::module)
+
 # cmake方式打包pybind11
-
 pybind11_add_module(teavoxelui example.cpp src/voxelvis.cpp src/instance.cpp src/common.cpp src/camera.cpp src/auxgrid.cpp)
-
-
-# TODO 彻底搞清public private
-target_link_libraries(my_app PRIVATE ${VOXELVIS_Libs})
 # TODO target_link_libraries的用处为什么会联系上include
 target_link_libraries(teavoxelui PRIVATE ${VOXELVIS_Libs})
 

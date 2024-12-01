@@ -1,6 +1,7 @@
 #include "voxelvis.h"
 #include "instance.h"
 #include "auxgrid.h"
+#include <string>
 
 int vis::voxel::display_vox::windows_init()
 {
@@ -168,12 +169,12 @@ void vis::voxel::display_vox::camera_event()
     if (keys[GLFW_KEY_W])
     {
         g_camera->ProcessKeyboard(Move::FORWARD, deltaTime);
-        std::cout << "摄像机移动->前" << std::endl;
+        std::cout << L"摄像机移动->前" << std::endl;
     }
     if (keys[GLFW_KEY_S])
     {
         g_camera->ProcessKeyboard(Move::BACKWARD, deltaTime);
-        std::cout << "摄像机移动->后" << std::endl;
+        std::cout << L"摄像机移动->后" << std::endl;
     }
     if (keys[GLFW_KEY_A])
     {
