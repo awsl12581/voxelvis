@@ -83,7 +83,7 @@ target_link_libraries(my_app PRIVATE ${VOXELVIS_Libs})
 # TODO target_link_libraries的用处为什么会联系上include
 target_link_libraries(teavoxelui PRIVATE ${VOXELVIS_Libs})
 
- 
+
 add_custom_command(TARGET teavoxelui POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E env PYTHONPATH=${CMAKE_CURRENT_BINARY_DIR}
     ${Python_EXECUTABLE} -m pybind11_stubgen teavoxelui --output ${CMAKE_CURRENT_BINARY_DIR}

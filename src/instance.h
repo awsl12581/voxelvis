@@ -11,12 +11,6 @@ namespace vis
 {
     namespace voxel
     {
-        struct voxel_cofig
-        {
-            glm::vec3 position;
-            glm::vec3 color;
-        };
-
         //
         extern std::mutex mutex; // 用于线程同步
 

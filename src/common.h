@@ -17,6 +17,16 @@
 namespace vis
 {
 
+    namespace voxel
+    {
+        // position+color
+        struct voxel_cofig
+        {
+            glm::vec3 position;
+            glm::vec3 color;
+        };
+    }
+
     namespace common
     {
         struct TeagineData
