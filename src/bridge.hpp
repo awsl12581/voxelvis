@@ -3,6 +3,7 @@
 
 #include "common.h"
 #include <vector>
+#include <random>
 #include <mutex>
 
 static inline std::vector<vis::voxel::voxel_cofig> *bridge_data = nullptr;
@@ -19,21 +20,22 @@ static inline std::mutex lck;
  */
 inline static bool cas_update_data(std::vector<vis::voxel::voxel_cofig> *data, std::vector<vis::voxel::voxel_cofig> **out_data)
 {
-    if (lck.try_lock())
+    std::lock_guard<std::mutex> lock(lck); // 使用 lock_guard 自动管理锁
+    if (data == nullptr)
     {
-        if (data == nullptr)
+        // 说明是提取数据
+        if (bridge_data == nullptr)
         {
-            // 说明是输出数据
-            *out_data = bridge_data;
+            return false; // 无数据可用
         }
-        if (out_data == nullptr)
-        {
-            bridge_data = data;
-        }
-        lck.unlock();
-        return true;
+        *out_data = bridge_data; // 输出数据
     }
-    return false;
+    else
+    {
+        // 说明是输入数据
+        bridge_data = data;
+    }
+    return true;
 }
 
 #endif // _TEA_INCLUDED_BRIDGE_H_

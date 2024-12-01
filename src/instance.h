@@ -6,6 +6,7 @@
 #include <vector>
 #include <thread>
 #include <mutex>
+#include "bridge.hpp"
 
 namespace vis
 {

@@ -39,6 +39,17 @@ public:
         return 0;
     }
 
+    int async_thread_exec()
+    {
+        std::thread([&]()
+                    {
+                        display.voxel_init();
+                        display.voxel_loop(); })
+
+            .detach();
+        return 0;
+    }
+
 private:
     int value;
     vis::voxel::display_vox display;
@@ -64,12 +75,34 @@ void get_and_vis_vec3(const vis::voxel::voxel_cofig &data)
 
 void set_occ_render_data(const std::vector<vis::voxel::voxel_cofig> &data)
 {
-    auto data_ptr = new std::vector<vis::voxel::voxel_cofig>(data);
+    // auto data_ptr = new std::vector<vis::voxel::voxel_cofig>(data);
+
+    const int GRID_X = 500;
+    const int GRID_Y = 500;
+    const int GRID_Z = 2;
+    std::vector<vis::voxel::voxel_cofig> voxels;
+    std::mt19937 gen;
+    std::uniform_real_distribution<float> colorDist(0.0f, 1.0f);
+
+    for (int x = 0; x < GRID_X; ++x)
+    {
+        for (int y = 0; y < GRID_Y; ++y)
+        {
+            for (int z = 0; z < GRID_Z; ++z)
+            {
+                vis::voxel::voxel_cofig voxel;
+                voxel.position = glm::vec3(x, y, z);
+                voxel.color = glm::vec3(colorDist(gen), colorDist(gen), colorDist(gen));
+                voxels.push_back(voxel);
+            }
+        }
+    }
+    auto data_ptr = new std::vector<vis::voxel::voxel_cofig>(voxels);
 
     if (cas_update_data(data_ptr, nullptr))
     {
         std::cout << "data ptr set!" << std::endl;
-        std::cout << bridge_data->at(0).position.x << " " << bridge_data->at(0).position.y << " " << bridge_data->at(0).position.z << std::endl;
+        // std::cout << bridge_data->at(100).position.x << " " << bridge_data->at(100).position.y << " " << bridge_data->at(100).position.z << std::endl;
     }
     else
     {
@@ -86,7 +119,8 @@ PYBIND11_MODULE(teavoxelui, m)
         .def(pybind11::init<int>())
         .def("check_normal", &TeaVis::check_normal)
         .def("init", &TeaVis::init)
-        .def("loop", &TeaVis::loop);
+        .def("loop", &TeaVis::loop)
+        .def("async_thread_exec", &TeaVis::async_thread_exec);
 
     pybind11::class_<vis::voxel::voxel_cofig>(m, "VoxelConfig")
         .def(pybind11::init<>())

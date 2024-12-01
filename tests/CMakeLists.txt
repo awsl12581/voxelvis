@@ -34,3 +34,5 @@ gtest_add_tests(TARGET      multiply_test
                 TEST_SUFFIX .noArgs
                 TEST_LIST   noArgsTests
 )
+
+add_executable(sb_thread sb_thread.cpp)

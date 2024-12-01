@@ -148,8 +148,19 @@ void vis::voxel::Voxel::Display(vis::common::TeagineData *teagine_data)
     glBindVertexArray(voxelVAO);
 
     //
-
-    visibleVoxels = voxels;
+    auto data = new std::vector<vis::voxel::voxel_cofig>();
+    bool ok = cas_update_data(nullptr, &data);
+    std::cout << "ok" << ok << std::endl;
+    if (ok)
+    {
+        visibleVoxels = *data;
+        std::cout << "use pipline data" << std::endl;
+    }
+    else
+    {
+        visibleVoxels = voxels;
+        std::cout << "use origin data" << std::endl;
+    }
 
     // 计算view proj model
     vMat = teagine_data->view;

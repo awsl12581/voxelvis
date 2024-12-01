@@ -1,4 +1,5 @@
 import sys
+from time import sleep
 
 sys.path.append("./build")
 
@@ -37,8 +38,14 @@ vector.append(voxel2)
 for v in vector:
     print("Position:", v.position, "| Color:", v.color)
 
+
+# 守护线程
+obj.async_thread_exec()
+
 # 调用绑定的函数
-set_occ_render_data(vector)
+while True:
+    set_occ_render_data(vector)
+    sleep(1)
 
 # obj.init()
 # obj.loop()
