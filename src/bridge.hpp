@@ -18,7 +18,7 @@ inline std::mutex lck;
  * @return true
  * @return false
  */
-inline static bool cas_update_data(std::vector<vis::voxel::voxel_cofig> *data, std::vector<vis::voxel::voxel_cofig> **out_data)
+inline bool cas_update_data(std::vector<vis::voxel::voxel_cofig> *data, std::vector<vis::voxel::voxel_cofig> **out_data)
 {
     std::lock_guard<std::mutex> lock(lck); // 使用 lock_guard 自动管理锁
     if (data == nullptr)
