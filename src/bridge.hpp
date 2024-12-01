@@ -6,9 +6,9 @@
 #include <random>
 #include <mutex>
 
-static inline std::vector<vis::voxel::voxel_cofig> *bridge_data = nullptr;
-static inline std::atomic<int> data_version(0); // 数据版本
-static inline std::mutex lck;
+inline std::vector<vis::voxel::voxel_cofig> *bridge_data = nullptr;
+inline std::atomic<int> data_version(0); // 数据版本
+inline std::mutex lck;
 // CAS 操作，进行原子比较和交换
 /**
  * @brief CAS操作
