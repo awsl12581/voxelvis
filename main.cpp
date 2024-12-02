@@ -1,13 +1,16 @@
 #include "voxelvis.h"
 #include "src/bridge.hpp"
 #include <windows.h>
+
+int i = 1;
 void set_occ_render_data()
 {
     // auto data_ptr = new std::vector<vis::voxel::voxel_cofig>(data);
 
     const int GRID_X = 500;
     const int GRID_Y = 500;
-    const int GRID_Z = 2;
+    const int GRID_Z = i;
+    i++;
     std::vector<vis::voxel::voxel_cofig> voxels;
     std::mt19937 gen;
     std::uniform_real_distribution<float> colorDist(0.0f, 1.0f);

@@ -1,18 +1,5 @@
-import threading
 import numpy as np
 import sys
-
-sys.path.append("./build")
-
-import example_module as example
-
-
-obj = example.TeaVis(10)
-
-
-def rendering_thread():
-    obj.init()
-    obj.loop()
 
 
 from mayavi import mlab
@@ -119,20 +106,23 @@ def draw(
 
     grid_voxels = grid_coords[(grid_coords[:, 3] > 0) & (grid_coords[:, 3] < 255)]
 
-    # figure = mlab.figure(size=(1400, 1400), bgcolor=(1, 1, 1))
+    print("grid_voxels:{}".format(grid_voxels.shape))
+    print("grid_voxels:{}".format(grid_voxels[0][3]))
 
-    # plt_plot = mlab.points3d(
-    #     grid_voxels[:, 0],
-    #     grid_voxels[:, 1],
-    #     grid_voxels[:, 2],
-    #     grid_voxels[:, 3],
-    #     colormap="viridis",
-    #     scale_factor=voxel_size - 0.05 * voxel_size,
-    #     mode="cube",
-    #     opacity=1.0,
-    #     vmin=1,
-    #     vmax=19,
-    # )
+    figure = mlab.figure(size=(1400, 1400), bgcolor=(1, 1, 1))
+
+    plt_plot = mlab.points3d(
+        grid_voxels[:, 0],
+        grid_voxels[:, 1],
+        grid_voxels[:, 2],
+        grid_voxels[:, 3],
+        colormap="viridis",
+        scale_factor=voxel_size - 0.05 * voxel_size,
+        mode="cube",
+        opacity=1.0,
+        vmin=1,
+        vmax=19,
+    )
 
     classname_to_color = {  # RGB.
         "noise": (0, 0, 0),  # Black.
@@ -168,63 +158,16 @@ def draw(
         "static.vegetation": (0, 175, 0),  # Green
         "vehicle.ego": (255, 240, 245),
     }
-    classname_to_color_cpp = {  # RGB.
-        0: (0, 0, 0),  # Black.
-        1: (70, 130, 180),  # Steelblue
-        2: (0, 0, 230),  # Blue
-        3: (0, 0, 230),  # Skyblue,
-        4: (0, 0, 230),  # Cornflowerblue
-        5: (0, 0, 230),  # Palevioletred
-        6: (0, 0, 230),  # Navy,
-        7: (0, 0, 230),  # Lightcoral
-        8: (0, 0, 230),  # Blueviolet
-        9: (112, 128, 144),  # Slategrey
-        10: (112, 128, 144),  # Chocolate
-        11: (112, 128, 144),  # Dimgrey
-        12: (112, 128, 144),  # Darkslategrey
-        13: (188, 143, 143),  # Rosybrown
-        14: (220, 20, 60),  # Crimson
-        15: (255, 158, 0),  # Coral
-        16: (255, 158, 0),  # Orangered
-        17: (255, 158, 0),  # Orange
-        18: (255, 158, 0),  # Darksalmon
-        19: (255, 158, 0),
-        20: (255, 158, 0),  # Gold
-        21: (255, 158, 0),  # Red
-        22: (255, 158, 0),  # Darkorange
-        23: (255, 158, 0),  # Tomato
-        24: (0, 207, 191),  # nuTonomy green
-        25: (0, 207, 191),
-        26: (75, 0, 75),
-        27: (0, 207, 191),
-        28: (222, 184, 135),  # Burlywood
-        29: (0, 207, 191),  # Bisque
-        30: (0, 175, 0),  # Green
-        31: (255, 240, 245),
-    }
-
-    input_dict = {}
-    input_dict["occ"] = voxels
-    input_dict["map"] = classname_to_color_cpp
-
-    print(obj.check_normal())
-
-    obj.init()
-
-    # 调用C++函数进行数据转换
-    voxels = obj.convert_dict_to_voxels(input_dict)
-
-    obj.loop()
 
     colors = np.array(list(classname_to_color.values())).astype(np.uint8)
     alpha = np.ones((colors.shape[0], 1), dtype=np.uint8) * 255
     colors = np.hstack([colors, alpha])
 
-    # plt_plot.glyph.scale_mode = "scale_by_vector"
+    plt_plot.glyph.scale_mode = "scale_by_vector"
 
-    # plt_plot.module_manager.scalar_lut_manager.lut.table = colors
-    # plt_plot.module_manager.scalar_lut_manager.data_range = [0, 31]
-    # mlab.show()
+    plt_plot.module_manager.scalar_lut_manager.lut.table = colors
+    plt_plot.module_manager.scalar_lut_manager.data_range = [0, 31]
+    mlab.show()
 
 
 # points = remove_far(points, point_cloud_range)
@@ -242,9 +185,11 @@ def main(path):
 
 
 if __name__ == "__main__":
-
     parser = argparse.ArgumentParser(description="")
-    parser.add_argument("--pts-path", required=True)
+    parser.add_argument(
+        "--pts-path",
+        default=".\\databases\\occupancy2\\n008-2018-08-01-15-16-36-0400__LIDAR_TOP__1533151603547590.pcd.bin",
+    )
     parser.add_argument("--voxel-size", type=float, default=0.2)
 
     args = parser.parse_args()

@@ -11,6 +11,22 @@ from teavoxelui import (
     set_occ_render_data,
 )
 
+# coding: utf-8
+
+import yaml
+
+
+def read(path):
+    with open(path, "r", encoding="utf-8") as f:
+        data = f.read()
+        result = yaml.load(data, Loader=yaml.FullLoader)
+    return result
+
+
+result = read("datasets/voxformer/semantic-kitti.yaml")
+print(result["color_map"][0] / 255)
+
+
 obj = TeaVis(10)
 
 print(obj.check_normal())

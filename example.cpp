@@ -72,32 +72,33 @@ void get_and_vis_vec3(const vis::voxel::voxel_cofig &data)
 
     std::cout << data.position.x << " " << data.position.y << " " << data.position.z << std::endl;
 }
-
+int i = 1;
 void set_occ_render_data(const std::vector<vis::voxel::voxel_cofig> &data)
 {
-    // auto data_ptr = new std::vector<vis::voxel::voxel_cofig>(data);
+    auto data_ptr = new std::vector<vis::voxel::voxel_cofig>(data);
 
-    const int GRID_X = 500;
-    const int GRID_Y = 500;
-    const int GRID_Z = 2;
-    std::vector<vis::voxel::voxel_cofig> voxels;
-    std::mt19937 gen;
-    std::uniform_real_distribution<float> colorDist(0.0f, 1.0f);
+    // const int GRID_X = 500;
+    // const int GRID_Y = 500;
+    // const int GRID_Z = i;
+    // i++;
+    // std::vector<vis::voxel::voxel_cofig> voxels;
+    // std::mt19937 gen;
+    // std::uniform_real_distribution<float> colorDist(0.0f, 1.0f);
 
-    for (int x = 0; x < GRID_X; ++x)
-    {
-        for (int y = 0; y < GRID_Y; ++y)
-        {
-            for (int z = 0; z < GRID_Z; ++z)
-            {
-                vis::voxel::voxel_cofig voxel;
-                voxel.position = glm::vec3(x, y, z);
-                voxel.color = glm::vec3(colorDist(gen), colorDist(gen), colorDist(gen));
-                voxels.push_back(voxel);
-            }
-        }
-    }
-    auto data_ptr = new std::vector<vis::voxel::voxel_cofig>(voxels);
+    // for (int x = 0; x < GRID_X; ++x)
+    // {
+    //     for (int y = 0; y < GRID_Y; ++y)
+    //     {
+    //         for (int z = 0; z < GRID_Z; ++z)
+    //         {
+    //             vis::voxel::voxel_cofig voxel;
+    //             voxel.position = glm::vec3(x, y, z);
+    //             voxel.color = glm::vec3(colorDist(gen), colorDist(gen), colorDist(gen));
+    //             voxels.push_back(voxel);
+    //         }
+    //     }
+    // }
+    // auto data_ptr = new std::vector<vis::voxel::voxel_cofig>(voxels);
 
     if (cas_update_data(data_ptr, nullptr))
     {
@@ -112,6 +113,7 @@ void set_occ_render_data(const std::vector<vis::voxel::voxel_cofig> &data)
 
 // 声明 std::vector<voxel_cofig> 为 OPAQUE 类型，即不希望 pybind11 进行任何操作
 PYBIND11_MAKE_OPAQUE(std::vector<vis::voxel::voxel_cofig>); // 声明为 OPAQUE 类型
+PYBIND11_MAKE_OPAQUE(glm::vec3);                            // 声明为 OPAQUE 类型
 
 PYBIND11_MODULE(teavoxelui, m)
 {
@@ -124,6 +126,7 @@ PYBIND11_MODULE(teavoxelui, m)
 
     pybind11::class_<vis::voxel::voxel_cofig>(m, "VoxelConfig")
         .def(pybind11::init<>())
+        // .def(pybind11::init<glm::vec3, glm::vec3>())
 
         // 为 position 添加 getter 和 setter，使用自定义的转换函数
         .def_property("position", [](const vis::voxel::voxel_cofig &self)
