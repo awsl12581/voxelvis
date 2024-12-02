@@ -18,7 +18,7 @@ int vis::voxel::display_vox::windows_init()
     {
         return -1;
     }
-
+    glfwWindowHint(GLFW_SAMPLES, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -109,6 +109,7 @@ void vis::voxel::display_vox::loop()
         glClearColor(0.0, 0.0, 0.0, 0.0);
         glClear(GL_COLOR_BUFFER_BIT);
         glClear(GL_DEPTH_BUFFER_BIT);
+        glEnable(GL_MULTISAMPLE);
         // 渲染world数据
         glm::mat4 projection = glm::perspective(
             g_camera->get_Zoom(),
