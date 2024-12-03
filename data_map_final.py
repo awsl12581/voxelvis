@@ -7,8 +7,8 @@ sys.path.append("./build")
 
 from teavoxelui import (
     TeaVis,
+    Vec3,
     VoxelConfig,
-    VoxelConfigVector,
     get_and_vis_vec3,
     set_occ_render_data,
 )
@@ -70,18 +70,36 @@ while i < 100:
     #     print(f"Value: {value}, Count: {count}")
 
     # 提取下标和值，并过滤掉值为 0 的数据
-    vector = VoxelConfigVector()
+    vector = [
+        VoxelConfig(
+            Vec3(*index),
+            Vec3(
+                class_to_color[array[index]][0] / 255.0,
+                class_to_color[array[index]][1] / 255.0,
+                class_to_color[array[index]][2] / 255.0,
+            ),
+        )
+        for index in np.ndindex(array.shape)
+        if array[index] > 0 and array[index] < 255
+    ]
 
-    for index in np.ndindex(array.shape):
-        value = array[index]
-        if value > 0 and value < 255:  # 过滤掉值为 0 的数据
-            data_point = VoxelConfig()  # 创建类的实例
-            data_point.position = index  # 动态赋值属性
-            data_point.color = (
-                class_to_color[value][0] / 255.0,
-                class_to_color[value][1] / 255.0,
-                class_to_color[value][2] / 255.0,
-            )
-            vector.append(data_point)
+    # for index in np.ndindex(array.shape):
+    #     value = array[index]
+    #     if value > 0 and value < 255:  # 过滤掉值为 0 的数据
+    #         data_point = VoxelConfig(
+    #             Vec3(*index),
+    #             Vec3(
+    #                 class_to_color[value][0] / 255.0,
+    #                 class_to_color[value][1] / 255.0,
+    #                 class_to_color[value][2] / 255.0,
+    #             ),
+    #         )  # 创建类的实例
+    #         # data_point.position = index  # 动态赋值属性
+    #         # data_point.color = (
+    #         #     class_to_color[value][0] / 255.0,
+    #         #     class_to_color[value][1] / 255.0,
+    #         #     class_to_color[value][2] / 255.0,
+    #         # )
+    #         vector.append(data_point)
     set_occ_render_data(vector)
-    sleep(1)
+    # sleep(1)

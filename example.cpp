@@ -112,8 +112,8 @@ void set_occ_render_data(const std::vector<vis::voxel::voxel_cofig> &data)
 }
 
 // 声明 std::vector<voxel_cofig> 为 OPAQUE 类型，即不希望 pybind11 进行任何操作
-PYBIND11_MAKE_OPAQUE(std::vector<vis::voxel::voxel_cofig>); // 声明为 OPAQUE 类型
-PYBIND11_MAKE_OPAQUE(glm::vec3);                            // 声明为 OPAQUE 类型
+// PYBIND11_MAKE_OPAQUE(std::vector<vis::voxel::voxel_cofig>); // 声明为 OPAQUE 类型
+// PYBIND11_MAKE_OPAQUE(glm::vec3);                            // 声明为 OPAQUE 类型
 
 PYBIND11_MODULE(teavoxelui, m)
 {
@@ -124,9 +124,15 @@ PYBIND11_MODULE(teavoxelui, m)
         .def("loop", &TeaVis::loop)
         .def("async_thread_exec", &TeaVis::async_thread_exec);
 
+    pybind11::class_<glm::vec3>(m, "Vec3")
+        .def(pybind11::init<float, float, float>())
+        .def_readwrite("x", &glm::vec3::x)
+        .def_readwrite("y", &glm::vec3::y)
+        .def_readwrite("z", &glm::vec3::z);
+
     pybind11::class_<vis::voxel::voxel_cofig>(m, "VoxelConfig")
         .def(pybind11::init<>())
-        // .def(pybind11::init<glm::vec3, glm::vec3>())
+        .def(pybind11::init<glm::vec3, glm::vec3>())
 
         // 为 position 添加 getter 和 setter，使用自定义的转换函数
         .def_property("position", [](const vis::voxel::voxel_cofig &self)
@@ -139,7 +145,7 @@ PYBIND11_MODULE(teavoxelui, m)
                       { self.color = tuple_to_vec3(col); });
 
     // 显式绑定 std::vector<voxel_cofig> 需要手动加入std_bind
-    pybind11::bind_vector<std::vector<vis::voxel::voxel_cofig>>(m, "VoxelConfigVector");
+    // pybind11::bind_vector<std::vector<vis::voxel::voxel_cofig>>(m, "VoxelConfigVector");
 
     m.def("get_and_vis_vec3", &get_and_vis_vec3);
     m.def("set_occ_render_data", &set_occ_render_data);
