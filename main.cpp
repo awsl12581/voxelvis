@@ -1,6 +1,5 @@
 #include "voxelvis.h"
 #include "src/bridge.hpp"
-#include <windows.h>
 
 int i = 1;
 void set_occ_render_data()
@@ -53,7 +52,6 @@ int main()
     while (true)
     {
         set_occ_render_data();
-        Sleep(1000);
     }
 
     return 0;
