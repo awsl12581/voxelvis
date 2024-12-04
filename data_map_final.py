@@ -53,23 +53,24 @@ for class_id, color in class_to_color.items():
 # 守护线程
 obj.async_thread_exec()
 
-i = 0
+i = 90
 # 调用绑定的函数
-while i < 100:
+while i < 119:
     array = np.squeeze(
         np.load("datasets/voxformer/vis/results_y_true_{}.npy".format(i))
     )
     i = i + 1
     print(array.shape)
 
-    # unique_values, counts = np.unique(array, return_counts=True)
-    # # 打印值分布
-    # distribution = dict(zip(unique_values, counts))
-    # print("Value Distribution:")
-    # for value, count in distribution.items():
-    #     print(f"Value: {value}, Count: {count}")
+    unique_values, counts = np.unique(array, return_counts=True)
+    # 打印值分布
+    distribution = dict(zip(unique_values, counts))
+    print("Value Distribution:")
+    for value, count in distribution.items():
+        print(f"Value: {value}, Count: {count}")
 
     # 提取下标和值，并过滤掉值为 0 的数据
+    # FIXME 注意这里需要多线程处理
     vector = [
         VoxelConfig(
             Vec3(*index),

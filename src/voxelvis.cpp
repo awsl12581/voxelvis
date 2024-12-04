@@ -110,6 +110,7 @@ void vis::voxel::display_vox::loop()
         glClear(GL_COLOR_BUFFER_BIT);
         glClear(GL_DEPTH_BUFFER_BIT);
         glEnable(GL_MULTISAMPLE);
+        std::cout << "------------------camera zoom" << g_camera->get_Zoom() << std::endl;
         // 渲染world数据
         glm::mat4 projection = glm::perspective(
             g_camera->get_Zoom(),

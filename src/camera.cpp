@@ -6,7 +6,7 @@ namespace vis::helper
         : Front(glm::vec3(0.0f, 0.0f, 0.0f)), MovementSpeed(SPEED), MouseSensitivity(SENSITIVTY), Zoom(ZOOM)
     {
         Up = glm::vec3(0.0f, 1.0f, 0.0f);
-        this->Position = glm::vec3(500.5f, 0.0f, 1.0f);
+        this->Position = glm::vec3(100.5f, 0.0f, 100.0f);
         this->WorldUp = Up;
         this->Yaw = YAW;
         this->Pitch = PITCH;
@@ -101,11 +101,11 @@ namespace vis::helper
         {
             this->Zoom -= yoffset * 0.05;
         }
-        if (this->Zoom <= 1.0f)
+        else if (this->Zoom < 1.0f)
         {
             this->Zoom = 1.0f;
         }
-        if (this->Zoom >= 45.0f)
+        else if (this->Zoom > 45.0f)
         {
             this->Zoom = 45.0f;
         }
@@ -136,12 +136,14 @@ namespace vis::helper
 
         // 缓冲区用于存储文本输入值
         ImGui::DragFloat3(u8"xyz", &Position.x);
-        if (ImGui::DragFloat3(u8"look at", &GoalPos.x))
-        {
-            // GOAL = position + front
-            // front = goal - position
-            Front = glm::normalize(Position - GoalPos);
-        }
+        // 键盘移动基准速度
+        ImGui::DragFloat(u8"MovementSpeed", &MovementSpeed);
+        // if (ImGui::DragFloat3(u8"look at", &GoalPos.x))
+        // {
+        //     // GOAL = position + front
+        //     // front = goal - position
+        //     Front = glm::normalize(Position - GoalPos);
+        // }
 
         ImGui::End();
     }
