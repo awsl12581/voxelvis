@@ -41,33 +41,54 @@ namespace vis::voxel
 
 }
 
-vis::voxel::Voxel::Voxel()
+vis::voxel::Voxel::Voxel() : light_position(100.0f, 100.0f, 100.0f)
 {
+
     // 留空隙，准备做反光平面
     float cubeVertices[] = {
-        // 顶点位置     // 顶点法线
-        -0.45f, -0.45f, -0.45f,
-        0.45f, -0.45f, -0.45f,
-        0.45f, 0.45f, -0.45f,
-        -0.45f, 0.45f, -0.45f,
-        -0.45f, -0.45f, 0.45f,
-        0.45f, -0.45f, 0.45f,
-        0.45f, 0.45f, 0.45f,
-        -0.45f, 0.45f, 0.45f};
+        // Positions         // Normals         // Texture Coords
+        -0.45f, -0.45f, -0.45f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, //
+        0.45f, -0.45f, -0.45f, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f,  //
+        0.45f, 0.45f, -0.45f, 0.0f, 0.0f, -1.0f, 1.0f, 1.0f,   //
+        0.45f, 0.45f, -0.45f, 0.0f, 0.0f, -1.0f, 1.0f, 1.0f,   //
+        -0.45f, 0.45f, -0.45f, 0.0f, 0.0f, -1.0f, 0.0f, 1.0f,  //
+        -0.45f, -0.45f, -0.45f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, //
 
-    unsigned int cubeIndices[] = {
-        // 背面
-        0, 3, 2, 2, 1, 0,
-        // 正面
-        4, 5, 6, 6, 7, 4,
-        // 左侧面
-        0, 4, 7, 7, 3, 0,
-        // 右侧面
-        1, 2, 6, 6, 5, 1,
-        // 底面
-        0, 1, 5, 5, 4, 0,
-        // 顶面
-        3, 7, 6, 6, 2, 3};
+        -0.45f, -0.45f, 0.45f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, //
+        0.45f, -0.45f, 0.45f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f,  //
+        0.45f, 0.45f, 0.45f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f,   //
+        0.45f, 0.45f, 0.45f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f,   //
+        -0.45f, 0.45f, 0.45f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f,  //
+        -0.45f, -0.45f, 0.45f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, //
+
+        -0.45f, 0.45f, 0.45f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f,   //
+        -0.45f, 0.45f, -0.45f, -1.0f, 0.0f, 0.0f, 1.0f, 1.0f,  //
+        -0.45f, -0.45f, -0.45f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f, //
+        -0.45f, -0.45f, -0.45f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f, //
+        -0.45f, -0.45f, 0.45f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f,  //
+        -0.45f, 0.45f, 0.45f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f,   //
+
+        0.45f, 0.45f, 0.45f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f,   //
+        0.45f, 0.45f, -0.45f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,  //
+        0.45f, -0.45f, -0.45f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, //
+        0.45f, -0.45f, -0.45f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, //
+        0.45f, -0.45f, 0.45f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,  //
+        0.45f, 0.45f, 0.45f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f,   //
+
+        -0.45f, -0.45f, -0.45f, 0.0f, -1.0f, 0.0f, 0.0f, 1.0f, //
+        0.45f, -0.45f, -0.45f, 0.0f, -1.0f, 0.0f, 1.0f, 1.0f,  //
+        0.45f, -0.45f, 0.45f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f,   //
+        0.45f, -0.45f, 0.45f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f,   //
+        -0.45f, -0.45f, 0.45f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f,  //
+        -0.45f, -0.45f, -0.45f, 0.0f, -1.0f, 0.0f, 0.0f, 1.0f, //
+
+        -0.45f, 0.45f, -0.45f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, //
+        0.45f, 0.45f, -0.45f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f,  //
+        0.45f, 0.45f, 0.45f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,   //
+        0.45f, 0.45f, 0.45f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,   //
+        -0.45f, 0.45f, 0.45f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,  //
+        -0.45f, 0.45f, -0.45f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f  //
+    };
     // 编译shader
     voxelShader = vis::common::CreateShaderProgram(vert, frag);
     glUseProgram(voxelShader);
@@ -75,13 +96,16 @@ vis::voxel::Voxel::Voxel()
     mLoc = glGetUniformLocation(voxelShader, "model_matrix");
     vLoc = glGetUniformLocation(voxelShader, "view_matrix");
     projLoc = glGetUniformLocation(voxelShader, "proj_matrix");
+    lightColorLoc = glGetUniformLocation(voxelShader, "lightColor");
+    lightPosLoc = glGetUniformLocation(voxelShader, "lightPos");
+    viewPosLoc = glGetUniformLocation(voxelShader, "viewPos");
 
     glGenVertexArrays(1, &voxelVAO);
     glGenBuffers(1, &voxelVBO);
     glGenBuffers(1, &instanceVBO);
     glGenBuffers(1, &voxelBuffer);
     glGenBuffers(1, &visibleVoxelBuffer);
-    glGenBuffers(1, &EBO);
+    // glGenBuffers(1, &EBO);
     glGenBuffers(1, &counterBuffer);
     voxels = CreateVoxelGrid();
 
@@ -90,11 +114,15 @@ vis::voxel::Voxel::Voxel()
     glBindVertexArray(voxelVAO);
     glBindBuffer(GL_ARRAY_BUFFER, voxelVBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVertices), cubeVertices, GL_STATIC_DRAW);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(cubeIndices), cubeIndices, GL_STATIC_DRAW);
+    // glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    // glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(cubeIndices), cubeIndices, GL_STATIC_DRAW);
     // 顶点属性
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)0);
     glEnableVertexAttribArray(0);
+    glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)(3 * sizeof(float)));
+    glEnableVertexAttribArray(3);
+    glVertexAttribPointer(4, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)(6 * sizeof(float)));
+    glEnableVertexAttribArray(4);
 
     glBindBuffer(GL_ARRAY_BUFFER, instanceVBO);
     glBufferData(GL_ARRAY_BUFFER, voxels.size() * sizeof(voxel_cofig), voxels.data(), GL_DYNAMIC_DRAW);
@@ -176,6 +204,10 @@ void vis::voxel::Voxel::Display(vis::common::TeagineData *teagine_data)
     glBufferData(GL_ARRAY_BUFFER, 0, nullptr, GL_DYNAMIC_DRAW); // 先清空缓冲区
     glBufferData(GL_ARRAY_BUFFER, visibleVoxels.size() * sizeof(voxel_cofig), visibleVoxels.data(), GL_DYNAMIC_DRAW);
 
+    glUniform3f(lightColorLoc, 1.0f, 1.0f, 1.0f);
+    glUniform3f(lightPosLoc, light_position.x, light_position.y, light_position.z);
+    glUniform3f(viewPosLoc, teagine_data->camera_position.x, teagine_data->camera_position.y, teagine_data->camera_position.z);
+
     glUniformMatrix4fv(mLoc, 1, GL_FALSE, glm::value_ptr(mMat));
     glUniformMatrix4fv(vLoc, 1, GL_FALSE, glm::value_ptr(vMat));
     glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(pMat));
@@ -183,7 +215,9 @@ void vis::voxel::Voxel::Display(vis::common::TeagineData *teagine_data)
     // 实例化绘制
     glBindVertexArray(voxelVAO);
     glMemoryBarrier(GL_VERTEX_ATTRIB_ARRAY_BARRIER_BIT);
-    glDrawElementsInstanced(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0, visibleVoxels.size());
+    // index render
+    // glDrawElementsInstanced(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0, visibleVoxels.size());
+    glDrawArraysInstanced(GL_TRIANGLES, 0, 36, visibleVoxels.size());
     glBindVertexArray(0);
 
     glDisable(GL_DEPTH_TEST);
@@ -193,6 +227,7 @@ void vis::voxel::Voxel::RenderUi()
 {
 
     ImGui::Begin("Voxel Settings");
+    ImGui::DragFloat3(u8"light position", &light_position.x);
     // if (ImGui::Checkbox("gpu", false))
     // {
     //     std::cout << "frustum GPU!" << std::endl;

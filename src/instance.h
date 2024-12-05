@@ -41,6 +41,9 @@ namespace vis
             GLuint counterBuffer;
             GLuint frustumCullShader;
             GLuint viewLoc;
+            // light
+            GLint objectColorLoc, lightColorLoc, lightPosLoc, viewPosLoc;
+            glm::vec3 light_position;
 
             GLuint mLoc, vLoc, projLoc;
             glm::mat4 pMat, vMat, mMat;
@@ -52,8 +55,12 @@ namespace vis
                 "layout(location = 0) in vec3 aPos;\n"
                 "layout(location = 1) in vec3 offset;\n"
                 "layout(location = 2) in vec3 aColor;\n"
+                "layout(location = 3) in vec3 normal;\n"
+                "layout(location = 4) in vec3 uv;\n"
 
                 "out vec3 vColor;"
+                "out vec3 Normal;"
+                "out vec3 FragPos;"
 
                 "uniform mat4 model_matrix;\n"
                 "uniform mat4 view_matrix;\n"
@@ -61,21 +68,43 @@ namespace vis
                 "void main()\n"
                 "{\n"
                 "    vColor = aColor;\n"
-                "    vec4 worldPos = model_matrix * vec4(aPos + offset, 1.0);\n"
-                "    gl_Position = proj_matrix * view_matrix * model_matrix * worldPos;\n"
+                "    vec4 worldPos = model_matrix * vec4(aPos + offset, 1.0f);\n"
+                "    gl_Position = proj_matrix * view_matrix * worldPos;\n"
+                "    FragPos = vec3(model_matrix * vec4(aPos + offset, 1.0f));\n"
+                "    Normal = mat3(transpose(inverse(model_matrix))) * normal;\n"
                 "}\n";
             const char *frag =
                 "#version 460 core\n"
                 "in vec3 vColor;\n"
+                "in vec3 FragPos;\n"
+                "in vec3 Normal;\n"
                 "out vec4 FragColor;\n"
                 "uniform float fogDensity = 0.00001;\n"
                 "uniform vec3 fogColor = vec3(0.5, 0.5, 0.5);\n"
+                "uniform vec3 lightPos; "
+                "uniform vec3 viewPos;"
+                "uniform vec3 lightColor;"
                 "void main()\n"
                 "{\n"
+
+                "    float ambientStrength = 0.1f;"
+                "    vec3 ambient = ambientStrength * lightColor;"
+
+                "    vec3 norm = normalize(Normal);"
+                "    vec3 lightDir = normalize(lightPos - FragPos);"
+                "    float diff = max(dot(norm, lightDir), 0.0);"
+                "    vec3 diffuse = diff * lightColor;"
+
+                "    float specularStrength = 0.5f;"
+                "    vec3 viewDir = normalize(viewPos - FragPos);"
+                "    vec3 reflectDir = reflect(-lightDir, norm);  "
+                "    float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32);"
+                "    vec3 specular = specularStrength * spec * lightColor;  "
+
                 "    float distance = gl_FragCoord.z / gl_FragCoord.w;\n"
                 "    float fogFactor = exp(-pow(fogDensity * distance, 2.0));\n"
                 "    fogFactor = clamp(fogFactor, 0.0, 1.0);\n"
-                "    vec3 finalColor = mix(fogColor, vColor, fogFactor);\n"
+                "    vec3 finalColor = (ambient + diffuse + specular) * mix(fogColor, vColor, fogFactor);\n"
                 "    FragColor = vec4(finalColor, 1.0);\n"
                 "}\n";
             const char *computed =
