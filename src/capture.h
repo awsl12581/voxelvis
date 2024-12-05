@@ -1,0 +1,4 @@
+#if !defined(_TEA_INCLUDED_CAPTURE_H_)
+#define _TEA_INCLUDED_CAPTURE_H_
+
+#endif // _TEA_INCLUDED_CAPTURE_H_
