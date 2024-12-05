@@ -105,8 +105,8 @@ void vis::voxel::display_vox::loop()
     while (!glfwWindowShouldClose(this->m_window))
     {
         // 清理帧缓冲区
-        // glClearColor(0.45f, 0.55f, 0.60f, 0.00f);
-        glClearColor(0.0, 0.0, 0.0, 0.0);
+        glClearColor(0.45f, 0.55f, 0.60f, 0.00f);
+        // glClearColor(0.0, 0.0, 0.0, 0.0);
         glClear(GL_COLOR_BUFFER_BIT);
         glClear(GL_DEPTH_BUFFER_BIT);
         glEnable(GL_MULTISAMPLE);

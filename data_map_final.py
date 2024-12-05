@@ -53,7 +53,7 @@ for class_id, color in class_to_color.items():
 # 守护线程
 obj.async_thread_exec()
 
-i = 90
+i = 100
 # 调用绑定的函数
 while i < 119:
     array = np.squeeze(
