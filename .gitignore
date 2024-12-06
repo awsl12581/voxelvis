@@ -3,6 +3,5 @@ __pycache__
 .vs
 build
 out
-3rdparty
 imgui.ini
 datasets
