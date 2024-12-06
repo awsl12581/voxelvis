@@ -5,6 +5,7 @@
 #include <vector>
 #include <random>
 #include <mutex>
+#include <atomic>
 
 inline std::vector<vis::voxel::voxel_cofig> *bridge_data = nullptr;
 inline std::atomic<int> data_version(0); // 数据版本

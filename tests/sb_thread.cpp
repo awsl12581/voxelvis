@@ -1,7 +1,8 @@
 #include <mutex>
 #include <vector>
 #include <iostream>
-#include <Windows.h>
+#include <thread>
+// #include <Windows.h>
 
 static std::vector<int> *bridge_data = nullptr;
 static std::mutex lck;
@@ -49,9 +50,9 @@ void thread_1()
 int main()
 {
 
-    std::thread([]() {
-        thread_1();
-        }).detach();
+    std::thread([]()
+                { thread_1(); })
+        .detach();
 
     while (true)
     {
@@ -67,7 +68,7 @@ int main()
         {
             std::cout << "data ptr not set!" << std::endl;
         }
-        Sleep(1000);
+        // Sleep(1000);
     }
 
     return 0;

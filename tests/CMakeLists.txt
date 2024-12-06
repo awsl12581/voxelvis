@@ -35,4 +35,13 @@ gtest_add_tests(TARGET      multiply_test
                 TEST_LIST   noArgsTests
 )
 
+if(LINUX)
+find_package(Threads REQUIRED)
+endif(LINUX)
+
+
 add_executable(sb_thread sb_thread.cpp)
+
+if(LINUX)
+target_link_libraries(sb_thread PRIVATE Threads::Threads)
+endif(LINUX)

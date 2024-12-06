@@ -4,6 +4,11 @@ project(voxelvis)
 
 enable_testing()
 
+if(LINUX)
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+endif(LINUX)
+
+
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON )
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -73,10 +78,17 @@ if(MSVC)
     add_compile_options("/execution-charset:gbk")
 endif(MSVC)
 
+if(LINUX)
+find_package(Threads REQUIRED)
+endif(LINUX)
+
 # vis app
 add_executable(my_app main.cpp src/voxelvis.cpp src/instance.cpp src/common.cpp src/camera.cpp src/auxgrid.cpp)
 # TODO 彻底搞清public private
 target_link_libraries(my_app PRIVATE ${VOXELVIS_Libs})
+if(LINUX)
+target_link_libraries(my_app PRIVATE Threads::Threads)
+endif(LINUX)
 
 # 添加动态库
 # add_library(teavoxelui SHARED src/example.cpp)
@@ -86,6 +98,10 @@ target_link_libraries(my_app PRIVATE ${VOXELVIS_Libs})
 pybind11_add_module(teavoxelui example.cpp src/voxelvis.cpp src/instance.cpp src/common.cpp src/camera.cpp src/auxgrid.cpp)
 # TODO target_link_libraries的用处为什么会联系上include
 target_link_libraries(teavoxelui PRIVATE ${VOXELVIS_Libs})
+if(LINUX)
+target_link_libraries(teavoxelui PRIVATE Threads::Threads)
+endif(LINUX)
+
 
 
 add_custom_command(TARGET teavoxelui POST_BUILD
