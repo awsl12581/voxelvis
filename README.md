@@ -1,4 +1,4 @@
-# voxel ansyc vis by opengl
+# voxel async vis by opengl
 
 this module is used to display OCC voxel information on autodrive
 
@@ -12,7 +12,7 @@ this module is used to display OCC voxel information on autodrive
   
 All 3rd party libraries should be located in ./3rdparty
 
-For glad, please see set CMakeLists.txt in its source directory
+For glad, please set CMakeLists.txt in its source directory
 
 ```cmake
 cmake_minimum_required(VERSION 3.22)
@@ -28,7 +28,6 @@ target_include_directories(glad PUBLIC include)
 - python >=3.8
 - numpy >=1.26.1
 - pybind11 >=2.13.6
+- pybind11_stubgen
 
 virtualvenv should be located in ./.venv
-
-
