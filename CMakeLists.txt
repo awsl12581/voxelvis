@@ -90,6 +90,16 @@ if(LINUX)
 target_link_libraries(my_app PRIVATE Threads::Threads)
 endif(LINUX)
 
+# find_package(X11 REQUIRED)
+# x11
+add_executable(my_app_x11 src/imgui_impl_x11_main.cpp src/imgui_impl_x11.cpp)
+# TODO 彻底搞清public private
+target_link_libraries(my_app_x11 PRIVATE ${VOXELVIS_Libs})
+if(LINUX)
+
+target_link_libraries(my_app_x11 PRIVATE Threads::Threads X11)
+endif(LINUX)
+
 # 添加动态库
 # add_library(teavoxelui SHARED src/example.cpp)
 # target_link_libraries(teavoxelui pybind11::module)
@@ -99,7 +109,7 @@ pybind11_add_module(teavoxelui example.cpp src/voxelvis.cpp src/instance.cpp src
 # TODO target_link_libraries的用处为什么会联系上include
 target_link_libraries(teavoxelui PRIVATE ${VOXELVIS_Libs})
 if(LINUX)
-target_link_libraries(teavoxelui PRIVATE Threads::Threads)
+target_link_libraries(teavoxelui PRIVATE Threads::Threads X11)
 endif(LINUX)
 
 
