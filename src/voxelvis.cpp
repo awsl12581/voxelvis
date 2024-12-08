@@ -20,7 +20,7 @@ int vis::voxel::display_vox::windows_init()
     }
     glfwWindowHint(GLFW_SAMPLES, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
     this->m_window = glfwCreateWindow(win.w, win.h, win.title, NULL, NULL);
@@ -76,7 +76,7 @@ int vis::voxel::display_vox::windows_close(int code)
 
 int vis::voxel::display_vox::windows_imgui_init()
 {
-    const char *glsl_version = "#version 460";
+    const char *glsl_version = "#version 450";
 
     std::cout << "set Dear ImGui context " << glsl_version << std::endl;
     IMGUI_CHECKVERSION();

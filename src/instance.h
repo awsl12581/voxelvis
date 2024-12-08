@@ -51,7 +51,7 @@ namespace vis
             std::vector<voxel_cofig> visibleVoxels; // 主线程中的可见体素
 
             const char *vert =
-                "#version 460 core\n"
+                "#version 450 core\n"
                 "layout(location = 0) in vec3 aPos;\n"
                 "layout(location = 1) in vec3 offset;\n"
                 "layout(location = 2) in vec3 aColor;\n"
@@ -74,7 +74,7 @@ namespace vis
                 "    Normal = mat3(transpose(inverse(model_matrix))) * normal;\n"
                 "}\n";
             const char *frag =
-                "#version 460 core\n"
+                "#version 450 core\n"
                 "in vec3 vColor;\n"
                 "in vec3 FragPos;\n"
                 "in vec3 Normal;\n"
@@ -109,7 +109,7 @@ namespace vis
                 "}\n";
             const char *computed =
 
-                "#version 460 core\n"
+                "#version 450 core\n"
                 "layout(local_size_x = 256) in;\n"
 
                 "struct Voxel {\n"

@@ -31,3 +31,34 @@ target_include_directories(glad PUBLIC include)
 - pybind11_stubgen
 
 virtualvenv should be located in ./.venv
+
+## some issue and solution
+
+if you find some issue when you run the version of python like this:
+```bash
+libGL error: MESA-LOADER: failed to open swrast: /lib/x86_64-linux-gnu/libLLVM-12.so.1: undefined symbol: ffi_type_sint32, version LIBFFI_BASE_7.0 (search paths /usr/lib/x86_64-linux-gnu/dri:\$${ORIGIN}/dri:/usr/lib/dri, suffix _dri)
+libGL error: failed to load driver: swrast
+glfw error 65543: GLX: Failed to create context: GLXBadFBConfig
+can not create window
+```
+you can solve this problem by:
+```bash
+sudo ln -s /usr/lib/x86_64-linux-gnu/dri/radeonsi_dri.so /usr/lib/dri/
+sudo ln -s /usr/lib/x86_64-linux-gnu/dri/swrast_dri.so /usr/lib/dri/
+
+```
+or
+```bash
+conda install -c conda-forge gcc
+```
+And maybe you will find this problem:
+```bash
+libGL error: MESA-LOADER: failed to open swrast: /lib/x86_64-linux-gnu/libLLVM-12.so.1: undefined symbol: ffi_type_sint32, version LIBFFI_BASE_7.0 (search paths /usr/lib/x86_64-linux-gnu/dri:\$${ORIGIN}/dri:/usr/lib/dri, suffix _dri)
+libGL error: failed to load driver: swrast
+glfw error 65543: GLX: Failed to create context: GLXBadFBConfig
+can not create window
+```
+a simple method is:
+```bash
+export LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libffi.so.7
+```

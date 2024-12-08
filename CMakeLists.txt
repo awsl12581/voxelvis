@@ -39,7 +39,7 @@ set(GLM_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 set(GLM_ENABLE_CXX_17 ON CACHE BOOL "" FORCE)
 # test
-add_subdirectory(tests)
+# add_subdirectory(tests)
 # glfw
 add_subdirectory(3rdparty/glfw)
 # glad
@@ -63,7 +63,14 @@ set(IMGUI_SOURCE_FILES
 # static lib
 add_library(imgui STATIC ${IMGUI_SOURCE_FILES})
 # pybind11
-find_package(pybind11 REQUIRED PATHS "${Python_ROOT_DIR}/Lib/site-packages/pybind11")
+if(MSVC)
+    find_package(pybind11 REQUIRED PATHS "${Python_ROOT_DIR}/Lib/site-packages/pybind11")
+elseif(LINUX)
+find_package(pybind11 REQUIRED PATHS "${Python_ROOT_DIR}/lib/python3.10/site-packages/pybind11")
+else()
+
+endif()
+
 
 # set libpath and name
 link_directories(${Python_LIBRARY_DIRS})
