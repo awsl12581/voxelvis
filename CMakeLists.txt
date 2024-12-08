@@ -99,11 +99,10 @@ endif(LINUX)
 
 # find_package(X11 REQUIRED)
 # x11
-add_executable(my_app_x11 src/imgui_impl_x11_main.cpp src/imgui_impl_x11.cpp)
-# TODO 彻底搞清public private
-target_link_libraries(my_app_x11 PRIVATE ${VOXELVIS_Libs})
-if(LINUX)
 
+if(LINUX)
+add_executable(my_app_x11 src/imgui_impl_x11_main.cpp src/imgui_impl_x11.cpp)
+target_link_libraries(my_app_x11 PRIVATE ${VOXELVIS_Libs})
 target_link_libraries(my_app_x11 PRIVATE Threads::Threads X11)
 endif(LINUX)
 

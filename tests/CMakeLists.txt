@@ -20,6 +20,11 @@ add_library(GTest::GTest INTERFACE IMPORTED)
 # 链接gtest
 target_link_libraries(GTest::GTest INTERFACE gtest_main)
 
+if(MSVC)
+    add_compile_options("/source-charset:utf-8")
+    add_compile_options("/execution-charset:gbk")
+endif(MSVC)
+
 # 将我们写的tests编译成可执行文件
 add_executable(multiply_test multiply_test.cpp)
 
