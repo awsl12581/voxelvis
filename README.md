@@ -2,6 +2,8 @@
 
 this module is used to display OCC voxel information on autodrive
 
+![voxel](./docs/images/voxvis.png)
+
 ## 3rdparty
 
 - opengl==4.6.0
