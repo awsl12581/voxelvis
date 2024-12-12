@@ -90,5 +90,8 @@
     "python.analysis.extraPaths": [
         "./build"
     ],
-    "cmake.outputLogEncoding": "gbk"
+    "cmake.outputLogEncoding": "gbk",
+    "C_Cpp.intelliSenseEngine": "disabled",
+    "trailing-spaces.trimOnSave": true
+
 }

@@ -2,14 +2,16 @@
 #define _TEA_INCLUDED_BRIDGE_H_
 
 #include "common.h"
-#include <vector>
-#include <random>
-#include <mutex>
 #include <atomic>
+#include <mutex>
+#include <random>
+#include <vector>
 
-inline std::vector<vis::voxel::voxel_cofig> *bridge_data = nullptr;
+
+inline std::vector<vis::voxel::voxel_cofig>* bridge_data = nullptr;
 inline std::atomic<int> data_version(0); // 数据版本
 inline std::mutex lck;
+
 // CAS 操作，进行原子比较和交换
 /**
  * @brief CAS操作
@@ -19,20 +21,17 @@ inline std::mutex lck;
  * @return true
  * @return false
  */
-inline bool cas_update_data(std::vector<vis::voxel::voxel_cofig> *data, std::vector<vis::voxel::voxel_cofig> **out_data)
+inline bool cas_update_data(std::vector<vis::voxel::voxel_cofig>* data, std::vector<vis::voxel::voxel_cofig>** out_data)
 {
     std::lock_guard<std::mutex> lock(lck); // 使用 lock_guard 自动管理锁
-    if (data == nullptr)
-    {
+    if (data == nullptr) {
         // 说明是提取数据
-        if (bridge_data == nullptr)
-        {
-            return false; // 无数据可用
+        if (bridge_data == nullptr) {
+            return false;        // 无数据可用
         }
         *out_data = bridge_data; // 输出数据
     }
-    else
-    {
+    else {
         // 说明是输入数据
         bridge_data = data;
     }

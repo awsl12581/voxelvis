@@ -21,75 +21,67 @@
 
 namespace vis
 {
-    namespace helper
+namespace helper
+{
+
+// Default camera values
+const GLfloat YAW = -90.0f;
+const GLfloat PITCH = 0.0f;
+const GLfloat SPEED = 1.0f;
+const GLfloat SENSITIVTY = 0.5f;
+const GLfloat ZOOM = 45.0f;
+
+class Camera
+{
+public:
+    enum CameraMovement
     {
+        FORWARD,
+        BACKWARD,
+        LEFT,
+        RIGHT,
+        UP,
+        DOWN
+    };
 
-        // Default camera values
-        const GLfloat YAW = -90.0f;
-        const GLfloat PITCH = 0.0f;
-        const GLfloat SPEED = 1.0f;
-        const GLfloat SENSITIVTY = 0.5f;
-        const GLfloat ZOOM = 45.0f;
+    // Camera(glm::vec3 position, glm::vec3 up, GLfloat yaw, GLfloat pitch);
+    Camera();
+    Camera(GLfloat posX, GLfloat posY, GLfloat posZ, GLfloat upX, GLfloat upY, GLfloat upZ, GLfloat yaw, GLfloat pitch);
+    glm::mat4 GetViewMatrix() const;
+    glm::vec3 CameraGetPosition() const;
+    void ProcessKeyboard(CameraMovement direction, GLfloat deltaTime);
+    void ProcessMouseMovement(GLfloat xoffset, GLfloat yoffset, GLboolean constrainPitch);
+    void ProcessMouseScroll(GLfloat yoffset);
 
-        class Camera
-        {
-        public:
-            enum CameraMovement
-            {
-                FORWARD,
-                BACKWARD,
-                LEFT,
-                RIGHT,
-                UP,
-                DOWN
-            };
+public:
+    void Init();
+    GLfloat get_Zoom() const;
+    void RenderUi();
 
-            // Camera(glm::vec3 position, glm::vec3 up, GLfloat yaw, GLfloat pitch);
-            Camera();
-            Camera(
-                GLfloat posX,
-                GLfloat posY,
-                GLfloat posZ,
-                GLfloat upX,
-                GLfloat upY,
-                GLfloat upZ,
-                GLfloat yaw,
-                GLfloat pitch);
-            glm::mat4 GetViewMatrix() const;
-            glm::vec3 CameraGetPosition() const;
-            void ProcessKeyboard(CameraMovement direction, GLfloat deltaTime);
-            void ProcessMouseMovement(GLfloat xoffset, GLfloat yoffset, GLboolean constrainPitch);
-            void ProcessMouseScroll(GLfloat yoffset);
+private:
+    // Calculates the front vector from the Camera's (updated) Eular Angles
+    void updateCameraVectors();
 
-        public:
-            void Init();
-            GLfloat get_Zoom() const;
-            void RenderUi();
+private:
+    GLFWwindow* window_;
 
-        private:
-            // Calculates the front vector from the Camera's (updated) Eular Angles
-            void updateCameraVectors();
-
-        private:
-            GLFWwindow *window_;
-
-        private:
-            // Camera Attributes
-            glm::vec3 Position;
-            glm::vec3 GoalPos; // 摄像机看向的目标  = position+front（方向向量）
-            glm::vec3 Front;
-            glm::vec3 Up;
-            glm::vec3 Right;
-            glm::vec3 WorldUp;
-            // Eular Angles
-            GLfloat Yaw;
-            GLfloat Pitch;
-            // Camera options
-            GLfloat MovementSpeed;
-            GLfloat MouseSensitivity;
-            GLfloat Zoom;
-        };
-    } // namespace helper
+private:
+    // Camera Attributes
+    glm::vec3 Position;
+    glm::vec3 GoalPos; // 摄像机看向的目标  = position+front（方向向量）
+    glm::vec3 Front;
+    glm::vec3 Up;
+    glm::vec3 Right;
+    glm::vec3 WorldUp;
+    // Eular Angles
+    GLfloat Yaw;
+    GLfloat Pitch;
+    // Camera options
+    GLfloat MovementSpeed;
+    GLfloat MouseSensitivity;
+    GLfloat Zoom;
+};
+} // namespace helper
 
 } // namespace vis
 

@@ -66,9 +66,9 @@ add_library(imgui STATIC ${IMGUI_SOURCE_FILES})
 if(MSVC)
     find_package(pybind11 REQUIRED PATHS "${Python_ROOT_DIR}/Lib/site-packages/pybind11")
 elseif(LINUX)
-find_package(pybind11 REQUIRED PATHS "${Python_ROOT_DIR}/lib/python3.10/site-packages/pybind11")
+    find_package(pybind11 REQUIRED PATHS "${Python_ROOT_DIR}/lib/python3.10/site-packages/pybind11")
 else()
-
+    find_package(pybind11 REQUIRED PATHS "${Python_ROOT_DIR}/Lib/site-packages/pybind11")
 endif()
 
 
@@ -109,7 +109,9 @@ endif(LINUX)
 # 添加动态库
 # add_library(teavoxelui SHARED src/example.cpp)
 # target_link_libraries(teavoxelui pybind11::module)
-
+if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  add_compile_options(-Wall -Wextra -Wpedantic)
+endif()
 # cmake方式打包pybind11
 pybind11_add_module(teavoxelui example.cpp src/voxelvis.cpp src/instance.cpp src/common.cpp src/camera.cpp src/auxgrid.cpp)
 # TODO target_link_libraries的用处为什么会联系上include

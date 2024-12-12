@@ -62,7 +62,7 @@ while i < 11:
 
     for batch_index in batch_size:
         batch_array = np.load(
-            "datasets/occfusion/vis/occfusion_y_pred_{}.npy".format(i)
+            "datasets/occfusion/vis/occfusion_y_true_{}.npy".format(i)
         )
 
         split_array = batch_array[(batch_index - 1), :, :, :]

@@ -3,15 +3,17 @@
 
 // Implemented features:
 //  [X] Platform: Clipboard support
-//  [ ] Platform: Mouse cursor shape and visibility. Disable with 'io.ConfigFlags |= ImGuiConfigFlags_NoMouseCursorChange'.
-//  [X] Platform: Keyboard arrays indexed using XK_* Virtual Key Codes, e.g. ImGui::IsKeyPressed(XK_space).
-//  [ ] Platform: Gamepad support. Enabled with 'io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad'.
+//  [ ] Platform: Mouse cursor shape and visibility. Disable with 'io.ConfigFlags |=
+//  ImGuiConfigFlags_NoMouseCursorChange'. [X] Platform: Keyboard arrays indexed using XK_* Virtual Key Codes, e.g.
+//  ImGui::IsKeyPressed(XK_space). [ ] Platform: Gamepad support. Enabled with 'io.ConfigFlags |=
+//  ImGuiConfigFlags_NavEnableGamepad'.
 
 #pragma once
 
-// Bool XQueryPointer(Display* display, Window w, Window* root_return, Window* child_return, int* root_x_return, int* root_y_return, int* win_x_return, int* win_y_return, unsigned int* mask_return);
+// Bool XQueryPointer(Display* display, Window w, Window* root_return, Window* child_return, int* root_x_return, int*
+// root_y_return, int* win_x_return, int* win_y_return, unsigned int* mask_return);
 
-IMGUI_IMPL_API bool ImGui_ImplX11_Init(void *display, void *window, void *XQueryPointerFunction = nullptr);
+IMGUI_IMPL_API bool ImGui_ImplX11_Init(void* display, void* window, void* XQueryPointerFunction = nullptr);
 IMGUI_IMPL_API void ImGui_ImplX11_Shutdown();
 IMGUI_IMPL_API bool ImGui_ImplX11_NewFrame();
 

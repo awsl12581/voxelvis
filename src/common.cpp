@@ -4,11 +4,10 @@ void vis::common::PrintShaderLog(GLuint shader)
 {
     int len = 0;
     int ch_written = 0;
-    char *log;
+    char* log;
     glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &len);
-    if (len > 0)
-    {
-        log = (char *)malloc(len);
+    if (len > 0) {
+        log = (char*)malloc(len);
         glGetShaderInfoLog(shader, len, &ch_written, log);
         // std::cout << "Shader Info Log: " << log << std::endl;
         std::cout << "Shader Info Log: " << log << std::endl;
@@ -20,11 +19,10 @@ void vis::common::PrintProgramLog(int prog)
 {
     int len = 0;
     int ch_written = 0;
-    char *log;
+    char* log;
     glGetProgramiv(prog, GL_INFO_LOG_LENGTH, &len);
-    if (len > 0)
-    {
-        log = (char *)malloc(len);
+    if (len > 0) {
+        log = (char*)malloc(len);
         glGetProgramInfoLog(prog, len, &ch_written, log);
         std::cout << "Program Info Log: " << log << std::endl;
         free(log);
@@ -35,8 +33,7 @@ bool vis::common::CheckOpenGLError()
 {
     bool found_error = false;
     int glErr = glGetError();
-    while (glErr != GL_NO_ERROR)
-    {
+    while (glErr != GL_NO_ERROR) {
         std::cerr << "glError: " << glErr << std::endl;
         found_error = true;
         glErr = glGetError();
@@ -44,7 +41,7 @@ bool vis::common::CheckOpenGLError()
     return found_error;
 }
 
-GLuint vis::common::CreateShaderProgram(const char *vert, const char *frag)
+GLuint vis::common::CreateShaderProgram(const char* vert, const char* frag)
 {
     GLint vertCompiled;
     GLint fragCompiled;
@@ -60,8 +57,7 @@ GLuint vis::common::CreateShaderProgram(const char *vert, const char *frag)
     glCompileShader(vShader);
     CheckOpenGLError();
     glGetShaderiv(vShader, GL_COMPILE_STATUS, &vertCompiled);
-    if (vertCompiled != 1)
-    {
+    if (vertCompiled != 1) {
         std::cerr << "vertex compilation failed" << std::endl;
         PrintShaderLog(vShader);
     }
@@ -70,8 +66,7 @@ GLuint vis::common::CreateShaderProgram(const char *vert, const char *frag)
     glCompileShader(fShader);
     CheckOpenGLError();
     glGetShaderiv(fShader, GL_COMPILE_STATUS, &fragCompiled);
-    if (fragCompiled != 1)
-    {
+    if (fragCompiled != 1) {
         std::cerr << "fragment compilation failed" << std::endl;
         PrintShaderLog(fShader);
     }
@@ -83,8 +78,7 @@ GLuint vis::common::CreateShaderProgram(const char *vert, const char *frag)
     glLinkProgram(vfProgram);
     CheckOpenGLError();
     glGetProgramiv(vfProgram, GL_LINK_STATUS, &linked);
-    if (linked != 1)
-    {
+    if (linked != 1) {
         std::cerr << "linking failed" << std::endl;
         PrintProgramLog(vfProgram);
     }
@@ -94,7 +88,7 @@ GLuint vis::common::CreateShaderProgram(const char *vert, const char *frag)
     return vfProgram;
 }
 
-GLuint vis::common::CompileComputeShader(const char *shaderSource)
+GLuint vis::common::CompileComputeShader(const char* shaderSource)
 {
     GLuint shader = glCreateShader(GL_COMPUTE_SHADER);
     glShaderSource(shader, 1, &shaderSource, nullptr);
@@ -102,12 +96,10 @@ GLuint vis::common::CompileComputeShader(const char *shaderSource)
 
     GLint success;
     glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
-    if (!success)
-    {
+    if (!success) {
         char infoLog[512];
         glGetShaderInfoLog(shader, 512, nullptr, infoLog);
-        std::cerr << "Compute Shader Compilation Failed:\n"
-                  << infoLog << std::endl;
+        std::cerr << "Compute Shader Compilation Failed:\n" << infoLog << std::endl;
     }
 
     // 创建计算着色器程序对象并链接
@@ -117,8 +109,7 @@ GLuint vis::common::CompileComputeShader(const char *shaderSource)
 
     // 检查程序链接错误
     glGetProgramiv(computeProgram, GL_LINK_STATUS, &success);
-    if (success != GL_TRUE)
-    {
+    if (success != GL_TRUE) {
         char buffer[512];
         glGetProgramInfoLog(computeProgram, 512, NULL, buffer);
         std::cerr << "Compute program linking error: " << buffer << std::endl;

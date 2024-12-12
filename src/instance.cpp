@@ -3,91 +3,96 @@
 
 namespace vis::voxel
 {
-    std::mutex mutex; // 用于线程同步
-    void frustumCullWorker(const std::vector<voxel_cofig> &voxels, std::vector<voxel_cofig> &visibleVoxels, const vis::helper::Frustum &frustum, int start, int end)
-    {
+std::mutex mutex; // 用于线程同步
 
-        std::vector<voxel_cofig> localVisibleVoxels;
-        for (int i = start; i < end; ++i)
-        {
-            if (frustum.isCubeInFrustum(voxels[i].position, 1.0f))
-            {
-                localVisibleVoxels.push_back(voxels[i]);
-            }
-        }
-        std::lock_guard<std::mutex> lock(mutex);
-        visibleVoxels.insert(visibleVoxels.end(), localVisibleVoxels.begin(), localVisibleVoxels.end());
-    }
-
-    void performFrustumCulling(const std::vector<voxel_cofig> &voxels, std::vector<voxel_cofig> &visibleVoxels, const vis::helper::Frustum &frustum)
-    {
-        visibleVoxels.clear();
-        int numThreads = std::thread::hardware_concurrency();
-        int chunkSize = voxels.size() / numThreads;
-        std::vector<std::thread> threads;
-
-        for (int i = 0; i < numThreads; ++i)
-        {
-            int start = i * chunkSize;
-            int end = (i == numThreads - 1) ? voxels.size() : start + chunkSize;
-            threads.emplace_back(frustumCullWorker, std::ref(voxels), std::ref(visibleVoxels), std::ref(frustum), start, end);
-        }
-
-        for (auto &thread : threads)
-        {
-            thread.join();
+void frustumCullWorker(
+    const std::vector<voxel_cofig>& voxels,
+    std::vector<voxel_cofig>& visibleVoxels,
+    const vis::helper::Frustum& frustum,
+    int start,
+    int end)
+{
+    std::vector<voxel_cofig> localVisibleVoxels;
+    for (int i = start; i < end; ++i) {
+        if (frustum.isCubeInFrustum(voxels[i].position, 1.0f)) {
+            localVisibleVoxels.push_back(voxels[i]);
         }
     }
+    std::lock_guard<std::mutex> lock(mutex);
+    visibleVoxels.insert(visibleVoxels.end(), localVisibleVoxels.begin(), localVisibleVoxels.end());
+}
+
+void performFrustumCulling(
+    const std::vector<voxel_cofig>& voxels,
+    std::vector<voxel_cofig>& visibleVoxels,
+    const vis::helper::Frustum& frustum)
+{
+    visibleVoxels.clear();
+    int numThreads = std::thread::hardware_concurrency();
+    int chunkSize = voxels.size() / numThreads;
+    std::vector<std::thread> threads;
+
+    for (int i = 0; i < numThreads; ++i) {
+        int start = i * chunkSize;
+        int end = (i == numThreads - 1) ? voxels.size() : start + chunkSize;
+        threads
+            .emplace_back(frustumCullWorker, std::ref(voxels), std::ref(visibleVoxels), std::ref(frustum), start, end);
+    }
+
+    for (auto& thread : threads) {
+        thread.join();
+    }
+}
 
 }
 
-vis::voxel::Voxel::Voxel() : light_position(100.0f, 100.0f, 100.0f)
+vis::voxel::Voxel::Voxel() :
+    light_position(100.0f, 100.0f, 100.0f)
 {
-
     // 留空隙，准备做反光平面
     float cubeVertices[] = {
         // Positions         // Normals         // Texture Coords
-        -0.45f, -0.45f, -0.45f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, //
-        0.45f, -0.45f, -0.45f, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f,  //
-        0.45f, 0.45f, -0.45f, 0.0f, 0.0f, -1.0f, 1.0f, 1.0f,   //
-        0.45f, 0.45f, -0.45f, 0.0f, 0.0f, -1.0f, 1.0f, 1.0f,   //
-        -0.45f, 0.45f, -0.45f, 0.0f, 0.0f, -1.0f, 0.0f, 1.0f,  //
-        -0.45f, -0.45f, -0.45f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, //
+        -0.45f, -0.45f, -0.45f, 0.0f,  0.0f,  -1.0f, 0.0f, 0.0f, //
+        0.45f,  -0.45f, -0.45f, 0.0f,  0.0f,  -1.0f, 1.0f, 0.0f, //
+        0.45f,  0.45f,  -0.45f, 0.0f,  0.0f,  -1.0f, 1.0f, 1.0f, //
+        0.45f,  0.45f,  -0.45f, 0.0f,  0.0f,  -1.0f, 1.0f, 1.0f, //
+        -0.45f, 0.45f,  -0.45f, 0.0f,  0.0f,  -1.0f, 0.0f, 1.0f, //
+        -0.45f, -0.45f, -0.45f, 0.0f,  0.0f,  -1.0f, 0.0f, 0.0f, //
 
-        -0.45f, -0.45f, 0.45f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, //
-        0.45f, -0.45f, 0.45f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f,  //
-        0.45f, 0.45f, 0.45f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f,   //
-        0.45f, 0.45f, 0.45f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f,   //
-        -0.45f, 0.45f, 0.45f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f,  //
-        -0.45f, -0.45f, 0.45f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, //
+        -0.45f, -0.45f, 0.45f,  0.0f,  0.0f,  1.0f,  0.0f, 0.0f, //
+        0.45f,  -0.45f, 0.45f,  0.0f,  0.0f,  1.0f,  1.0f, 0.0f, //
+        0.45f,  0.45f,  0.45f,  0.0f,  0.0f,  1.0f,  1.0f, 1.0f, //
+        0.45f,  0.45f,  0.45f,  0.0f,  0.0f,  1.0f,  1.0f, 1.0f, //
+        -0.45f, 0.45f,  0.45f,  0.0f,  0.0f,  1.0f,  0.0f, 1.0f, //
+        -0.45f, -0.45f, 0.45f,  0.0f,  0.0f,  1.0f,  0.0f, 0.0f, //
 
-        -0.45f, 0.45f, 0.45f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f,   //
-        -0.45f, 0.45f, -0.45f, -1.0f, 0.0f, 0.0f, 1.0f, 1.0f,  //
-        -0.45f, -0.45f, -0.45f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f, //
-        -0.45f, -0.45f, -0.45f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f, //
-        -0.45f, -0.45f, 0.45f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f,  //
-        -0.45f, 0.45f, 0.45f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f,   //
+        -0.45f, 0.45f,  0.45f,  -1.0f, 0.0f,  0.0f,  1.0f, 0.0f, //
+        -0.45f, 0.45f,  -0.45f, -1.0f, 0.0f,  0.0f,  1.0f, 1.0f, //
+        -0.45f, -0.45f, -0.45f, -1.0f, 0.0f,  0.0f,  0.0f, 1.0f, //
+        -0.45f, -0.45f, -0.45f, -1.0f, 0.0f,  0.0f,  0.0f, 1.0f, //
+        -0.45f, -0.45f, 0.45f,  -1.0f, 0.0f,  0.0f,  0.0f, 0.0f, //
+        -0.45f, 0.45f,  0.45f,  -1.0f, 0.0f,  0.0f,  1.0f, 0.0f, //
 
-        0.45f, 0.45f, 0.45f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f,   //
-        0.45f, 0.45f, -0.45f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,  //
-        0.45f, -0.45f, -0.45f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, //
-        0.45f, -0.45f, -0.45f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, //
-        0.45f, -0.45f, 0.45f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,  //
-        0.45f, 0.45f, 0.45f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f,   //
+        0.45f,  0.45f,  0.45f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f, //
+        0.45f,  0.45f,  -0.45f, 1.0f,  0.0f,  0.0f,  1.0f, 1.0f, //
+        0.45f,  -0.45f, -0.45f, 1.0f,  0.0f,  0.0f,  0.0f, 1.0f, //
+        0.45f,  -0.45f, -0.45f, 1.0f,  0.0f,  0.0f,  0.0f, 1.0f, //
+        0.45f,  -0.45f, 0.45f,  1.0f,  0.0f,  0.0f,  0.0f, 0.0f, //
+        0.45f,  0.45f,  0.45f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f, //
 
-        -0.45f, -0.45f, -0.45f, 0.0f, -1.0f, 0.0f, 0.0f, 1.0f, //
-        0.45f, -0.45f, -0.45f, 0.0f, -1.0f, 0.0f, 1.0f, 1.0f,  //
-        0.45f, -0.45f, 0.45f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f,   //
-        0.45f, -0.45f, 0.45f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f,   //
-        -0.45f, -0.45f, 0.45f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f,  //
-        -0.45f, -0.45f, -0.45f, 0.0f, -1.0f, 0.0f, 0.0f, 1.0f, //
+        -0.45f, -0.45f, -0.45f, 0.0f,  -1.0f, 0.0f,  0.0f, 1.0f, //
+        0.45f,  -0.45f, -0.45f, 0.0f,  -1.0f, 0.0f,  1.0f, 1.0f, //
+        0.45f,  -0.45f, 0.45f,  0.0f,  -1.0f, 0.0f,  1.0f, 0.0f, //
+        0.45f,  -0.45f, 0.45f,  0.0f,  -1.0f, 0.0f,  1.0f, 0.0f, //
+        -0.45f, -0.45f, 0.45f,  0.0f,  -1.0f, 0.0f,  0.0f, 0.0f, //
+        -0.45f, -0.45f, -0.45f, 0.0f,  -1.0f, 0.0f,  0.0f, 1.0f, //
 
-        -0.45f, 0.45f, -0.45f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, //
-        0.45f, 0.45f, -0.45f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f,  //
-        0.45f, 0.45f, 0.45f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,   //
-        0.45f, 0.45f, 0.45f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,   //
-        -0.45f, 0.45f, 0.45f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,  //
-        -0.45f, 0.45f, -0.45f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f  //
+        -0.45f, 0.45f,  -0.45f, 0.0f,  1.0f,  0.0f,  0.0f, 1.0f, //
+        0.45f,  0.45f,  -0.45f, 0.0f,  1.0f,  0.0f,  1.0f, 1.0f, //
+        0.45f,  0.45f,  0.45f,  0.0f,  1.0f,  0.0f,  1.0f, 0.0f, //
+        0.45f,  0.45f,  0.45f,  0.0f,  1.0f,  0.0f,  1.0f, 0.0f, //
+        -0.45f, 0.45f,  0.45f,  0.0f,  1.0f,  0.0f,  0.0f, 0.0f, //
+        -0.45f, 0.45f,  -0.45f, 0.0f,  1.0f,  0.0f,  0.0f, 1.0f  //
     };
     // 编译shader
     voxelShader = vis::common::CreateShaderProgram(vert, frag);
@@ -117,22 +122,22 @@ vis::voxel::Voxel::Voxel() : light_position(100.0f, 100.0f, 100.0f)
     // glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
     // glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(cubeIndices), cubeIndices, GL_STATIC_DRAW);
     // 顶点属性
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)(3 * sizeof(float)));
+    glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(3);
-    glVertexAttribPointer(4, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)(6 * sizeof(float)));
+    glVertexAttribPointer(4, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
     glEnableVertexAttribArray(4);
 
     glBindBuffer(GL_ARRAY_BUFFER, instanceVBO);
     glBufferData(GL_ARRAY_BUFFER, voxels.size() * sizeof(voxel_cofig), voxels.data(), GL_DYNAMIC_DRAW);
 
     // 设置实例属性（位置和颜色）
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(voxel_cofig), (void *)offsetof(voxel_cofig, position));
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(voxel_cofig), (void*)offsetof(voxel_cofig, position));
     glEnableVertexAttribArray(1);
     glVertexAttribDivisor(1, 1);
 
-    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(voxel_cofig), (void *)offsetof(voxel_cofig, color));
+    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(voxel_cofig), (void*)offsetof(voxel_cofig, color));
     glEnableVertexAttribArray(2);
     glVertexAttribDivisor(2, 1);
 
@@ -164,9 +169,8 @@ vis::voxel::Voxel::Voxel() : light_position(100.0f, 100.0f, 100.0f)
     glUseProgram(0);
 }
 
-void vis::voxel::Voxel::Display(vis::common::TeagineData *teagine_data)
+void vis::voxel::Voxel::Display(vis::common::TeagineData* teagine_data)
 {
-
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glEnable(GL_DEPTH_TEST);
@@ -180,13 +184,11 @@ void vis::voxel::Voxel::Display(vis::common::TeagineData *teagine_data)
     auto data = new std::vector<vis::voxel::voxel_cofig>();
     bool ok = cas_update_data(nullptr, &data);
     std::cout << "ok" << ok << std::endl;
-    if (ok)
-    {
+    if (ok) {
         visibleVoxels = *data;
         std::cout << "use pipline data" << std::endl;
     }
-    else
-    {
+    else {
         visibleVoxels = voxels;
         std::cout << "use origin data" << std::endl;
     }
@@ -206,7 +208,11 @@ void vis::voxel::Voxel::Display(vis::common::TeagineData *teagine_data)
 
     glUniform3f(lightColorLoc, 1.0f, 1.0f, 1.0f);
     glUniform3f(lightPosLoc, light_position.x, light_position.y, light_position.z);
-    glUniform3f(viewPosLoc, teagine_data->camera_position.x, teagine_data->camera_position.y, teagine_data->camera_position.z);
+    glUniform3f(
+        viewPosLoc,
+        teagine_data->camera_position.x,
+        teagine_data->camera_position.y,
+        teagine_data->camera_position.z);
 
     glUniformMatrix4fv(mLoc, 1, GL_FALSE, glm::value_ptr(mMat));
     glUniformMatrix4fv(vLoc, 1, GL_FALSE, glm::value_ptr(vMat));
@@ -225,7 +231,6 @@ void vis::voxel::Voxel::Display(vis::common::TeagineData *teagine_data)
 
 void vis::voxel::Voxel::RenderUi()
 {
-
     ImGui::Begin("Voxel Settings");
     ImGui::DragFloat3(u8"light position", &light_position.x);
     // if (ImGui::Checkbox("gpu", false))
@@ -240,7 +245,6 @@ vis::voxel::Voxel::~Voxel() = default;
 
 void vis::voxel::Voxel::ComputedRender()
 {
-
     // 更新视锥体
     glm::mat4 viewProjMatrix = pMat * vMat;
     frustum.update(viewProjMatrix);
@@ -284,12 +288,9 @@ std::vector<vis::voxel::voxel_cofig> vis::voxel::Voxel::CreateVoxelGrid()
     std::mt19937 gen;
     std::uniform_real_distribution<float> colorDist(0.0f, 1.0f);
 
-    for (int x = 0; x < GRID_X; ++x)
-    {
-        for (int y = 0; y < GRID_Y; ++y)
-        {
-            for (int z = 0; z < GRID_Z; ++z)
-            {
+    for (int x = 0; x < GRID_X; ++x) {
+        for (int y = 0; y < GRID_Y; ++y) {
+            for (int z = 0; z < GRID_Z; ++z) {
                 voxel_cofig voxel;
                 voxel.position = glm::vec3(x, y, z);
                 voxel.color = glm::vec3(colorDist(gen), colorDist(gen), colorDist(gen));
