@@ -89,8 +89,16 @@ if(LINUX)
 find_package(Threads REQUIRED)
 endif(LINUX)
 
+
+set(Vis_Source_Files
+    src/voxelvis.cpp
+    src/instance.cpp
+    src/common.cpp
+    src/camera.cpp
+    src/auxgrid.cpp
+)
 # vis app
-add_executable(my_app main.cpp src/voxelvis.cpp src/instance.cpp src/common.cpp src/camera.cpp src/auxgrid.cpp)
+add_executable(my_app main.cpp ${Vis_Source_Files})
 # TODO 彻底搞清public private
 target_link_libraries(my_app PRIVATE ${VOXELVIS_Libs})
 if(LINUX)
@@ -113,7 +121,7 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
 # cmake方式打包pybind11
-pybind11_add_module(teavoxelui example.cpp src/voxelvis.cpp src/instance.cpp src/common.cpp src/camera.cpp src/auxgrid.cpp)
+pybind11_add_module(teavoxelui example.cpp ${Vis_Source_Files})
 # TODO target_link_libraries的用处为什么会联系上include
 target_link_libraries(teavoxelui PRIVATE ${VOXELVIS_Libs})
 if(LINUX)

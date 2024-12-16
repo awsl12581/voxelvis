@@ -84,14 +84,16 @@
         "any": "cpp",
         "condition_variable": "cpp",
         "csignal": "cpp",
-        "span": "cpp"
+        "span": "cpp",
+        "codecvt": "cpp",
+        "queue": "cpp"
     },
     "python.analysis.autoImportCompletions": true,
     "python.analysis.extraPaths": [
         "./build"
     ],
     "cmake.outputLogEncoding": "gbk",
-    "C_Cpp.intelliSenseEngine": "disabled",
+    "C_Cpp.intelliSenseEngine": "default",
     "trailing-spaces.trimOnSave": true
 
 }

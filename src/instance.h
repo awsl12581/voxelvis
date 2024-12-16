@@ -1,6 +1,5 @@
 #ifndef _TEA_INCLUDED_INSTANCE_H_
 #define _TEA_INCLUDED_INSTANCE_H_
-
 #include <mutex>
 #include <thread>
 #include <vector>

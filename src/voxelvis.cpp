@@ -1,8 +1,12 @@
 #include "voxelvis.h"
 #include "auxgrid.h"
+#include "glad/glad.h"
 #include "instance.h"
+#include <sstream>
 #include <string>
 
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include "stb_image_write.h"
 
 int vis::voxel::display_vox::windows_init()
 {
@@ -44,6 +48,7 @@ int vis::voxel::display_vox::windows_init()
 
     std::cout << "Set the viewport to update when handling window size changes" << std::endl;
     glfwSetFramebufferSizeCallback(this->m_window, [](GLFWwindow* window, int width, int height) {
+        // set global opengl viewport (not include imgui render)
         glViewport(0, 0, width, height);
         printf("The callback gets changed in the window w=[%d],h=[%d]\n", width, height);
         gobal_data::SetWindowsSize(width, height);
@@ -99,11 +104,12 @@ void vis::voxel::display_vox::loop()
     while (!glfwWindowShouldClose(this->m_window)) {
         // 清理帧缓冲区
         glClearColor(0.45f, 0.55f, 0.60f, 0.00f);
+
         // glClearColor(0.0, 0.0, 0.0, 0.0);
         glClear(GL_COLOR_BUFFER_BIT);
         glClear(GL_DEPTH_BUFFER_BIT);
         glEnable(GL_MULTISAMPLE);
-        std::cout << "------------------camera zoom" << g_camera->get_Zoom() << std::endl;
+        // std::cout << "------------------camera zoom" << g_camera->get_Zoom() << std::endl;
         // 渲染world数据
         glm::mat4 projection = glm::perspective(
             g_camera->get_Zoom(),
@@ -133,11 +139,21 @@ void vis::voxel::display_vox::loop()
 
         // 渲染自定义界面
         // App::RenderUI();
+        ImGui::Begin("Capture");
+        if (ImGui::Button("Save Screenshot")) {
+            auto t = std::time(nullptr);
+            auto tm = *std::localtime(&t);
+            std::ostringstream oss;
+            oss << "screenshot_" << std::put_time(&tm, "%Y%m%d_%H%M%S") << ".png";
+            save_screenshot(oss.str().c_str(), gobal_data::kWidth_, gobal_data::kHeight_);
+        }
+        ImGui::End();
 
         // aux_grid->Display();
         // stage_->RenderView();
         g_camera->RenderUi();
         voxel->RenderUi();
+        // ImGui::ShowDemoWindow();
 
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -299,6 +315,21 @@ void vis::voxel::mouse_button_callback(GLFWwindow* window, int button, int actio
             gobal_data::SetLeftMouseButtonPressed(false);
         }
     }
+}
+
+void vis::voxel::save_screenshot(const char* filename, int width, int height)
+{
+    std::vector<unsigned char> pixels(3 * width * height);
+    glReadPixels(0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, pixels.data());
+
+    // Flip the image vertically
+    for (int y = 0; y < height / 2; ++y) {
+        for (int x = 0; x < width * 3; ++x) {
+            std::swap(pixels[y * width * 3 + x], pixels[(height - 1 - y) * width * 3 + x]);
+        }
+    }
+
+    stbi_write_png(filename, width, height, 3, pixels.data(), width * 3);
 }
 
 void vis::voxel::gobal_data::SetWindowsSize(int width, int height)
