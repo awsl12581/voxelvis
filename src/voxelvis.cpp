@@ -125,7 +125,7 @@ void vis::voxel::display_vox::loop()
         auxgrid->Display(teagine_data);
         voxel->Display(teagine_data);
         // capture
-        if (is_capture_start) {
+        if (capture != nullptr) {
             capture->captureFrame();
         }
         ///////////////////////////////////////////////////////////////////////////
@@ -157,6 +157,7 @@ void vis::voxel::display_vox::loop()
                 auto tm = *std::localtime(&t);
                 std::ostringstream oss;
                 oss << "video_" << std::put_time(&tm, "%Y%m%d_%H%M%S") << ".mp4";
+                // TODO 这里保存视频必须按640x480的分辨率，需要更合理的数据处理方案
                 capture = new vis::common::Capture(gobal_data::kWidth_, gobal_data::kHeight_, 30, oss.str().c_str());
                 capture->start();
                 ImGui::Text("Recording... Warning! dont change the window size");
@@ -167,10 +168,6 @@ void vis::voxel::display_vox::loop()
                 delete capture;
             }
         }
-        // if (ImGui::Button("Stop Recording")) {
-        //     capture->stop();
-        //     delete capture;
-        // }
         ImGui::End();
 
         // aux_grid->Display();
