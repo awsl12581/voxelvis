@@ -103,7 +103,8 @@ private:
     GLFWwindow* m_window;
     GLfloat deltaTime = 0.0f;
     GLfloat lastFrame = 0.0f;
-    vis::common::Capture capture;
+    bool is_capture_start = false;
+    vis::common::Capture* capture;
 };
 
 } // namespace voxel

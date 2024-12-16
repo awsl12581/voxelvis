@@ -4,6 +4,10 @@ this module is used to display OCC voxel information on autodrive
 
 ![voxel](./docs/images/voxvis.png)
 
+## before start
+
+ffmpeg must to be installed!
+
 ## 3rdparty
 
 - opengl==4.6.0
@@ -11,7 +15,7 @@ this module is used to display OCC voxel information on autodrive
 - glfw3==3.4.0
 - glad==2.0.8
 - imgui==1.91.5
-  
+
 All 3rd party libraries should be located in ./3rdparty
 
 For glad, please set CMakeLists.txt in its source directory
