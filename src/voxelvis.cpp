@@ -125,8 +125,9 @@ void vis::voxel::display_vox::loop()
         auxgrid->Display(teagine_data);
         voxel->Display(teagine_data);
         // capture
-        capture->captureFrame();
-
+        if (is_capture_start) {
+            capture->captureFrame();
+        }
         ///////////////////////////////////////////////////////////////////////////
         // 渲染imgui
         ImGui_ImplOpenGL3_NewFrame();
@@ -155,12 +156,14 @@ void vis::voxel::display_vox::loop()
                 auto t = std::time(nullptr);
                 auto tm = *std::localtime(&t);
                 std::ostringstream oss;
-                oss << "screenshot_" << std::put_time(&tm, "%Y%m%d_%H%M%S") << ".png";
+                oss << "video_" << std::put_time(&tm, "%Y%m%d_%H%M%S") << ".mp4";
                 capture = new vis::common::Capture(gobal_data::kWidth_, gobal_data::kHeight_, 30, oss.str().c_str());
                 capture->start();
+                ImGui::Text("Recording... Warning! dont change the window size");
             }
             else {
                 capture->stop();
+                ImGui::Text("Stop Recording");
                 delete capture;
             }
         }
