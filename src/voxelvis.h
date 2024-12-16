@@ -17,6 +17,7 @@
 #include <string>
 
 #include "camera.h"
+#include "capture.h"
 #include "ui/im_image.h"
 
 namespace vis
@@ -96,10 +97,13 @@ public:
 
     void voxel_loop();
 
+    display_vox();
+
 private:
     GLFWwindow* m_window;
     GLfloat deltaTime = 0.0f;
     GLfloat lastFrame = 0.0f;
+    vis::common::Capture capture;
 };
 
 } // namespace voxel

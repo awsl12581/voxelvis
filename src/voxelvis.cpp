@@ -124,6 +124,8 @@ void vis::voxel::display_vox::loop()
         // stage_->Play();
         auxgrid->Display(teagine_data);
         voxel->Display(teagine_data);
+        // capture
+        capture.captureFrame();
 
         ///////////////////////////////////////////////////////////////////////////
         // 渲染imgui
@@ -146,6 +148,12 @@ void vis::voxel::display_vox::loop()
             std::ostringstream oss;
             oss << "screenshot_" << std::put_time(&tm, "%Y%m%d_%H%M%S") << ".png";
             save_screenshot(oss.str().c_str(), gobal_data::kWidth_, gobal_data::kHeight_);
+        }
+        if (ImGui::Button("Start Recording")) {
+            capture.start();
+        }
+        if (ImGui::Button("Stop Recording")) {
+            capture.stop();
         }
         ImGui::End();
 
@@ -222,6 +230,11 @@ void vis::voxel::display_vox::voxel_init()
 void vis::voxel::display_vox::voxel_loop()
 {
     this->loop();
+}
+
+vis::voxel::display_vox::display_vox() :
+    capture(800, 600, 30, "output.mp4")
+{
 }
 
 void vis::voxel::key_callback(GLFWwindow* window, int key, int scancode, int action, int mode)

@@ -91,6 +91,7 @@ endif(LINUX)
 
 
 set(Vis_Source_Files
+    src/capture.cpp
     src/voxelvis.cpp
     src/instance.cpp
     src/common.cpp
