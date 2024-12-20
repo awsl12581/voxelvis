@@ -32,7 +32,7 @@ jobs:
       if: runner.os == 'Linux'
       run: |
         sudo apt update
-        sudo apt install -y libgl1-mesa-dev libglu1-mesa-dev mesa-utils freeglut3-dev
+        sudo apt install -y libgl1-mesa-dev libglu1-mesa-dev mesa-utils freeglut3-dev wayland-protocols libwayland-dev
 
     # 设置 Python 环境
     - name: Set up Python ${{ matrix.python-version }}
