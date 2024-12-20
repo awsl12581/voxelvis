@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    runs-on: windows-2022 # 使用 Windows 2022 镜像，适用于 MSVC 2022
+    runs-on: windows-2022
 
     strategy:
       matrix:
@@ -29,8 +29,8 @@ jobs:
       # 安装依赖（Windows 上的安装步骤，安装 Python 环境等）
       - name: Install dependencies and set up virtual environment
         run: |
-          python -m venv "${GITHUB_WORKSPACE}\\.venv"  # 在工作区创建虚拟环境
-          "${GITHUB_WORKSPACE}\\.venv\\Scripts\\activate"  # 激活虚拟环境
+          python -m venv "${GITHUB_WORKSPACE}\\.venv"
+          "${GITHUB_WORKSPACE}\\.venv\\Scripts\\activate"
           pip install --upgrade pip
           pip install pybind11 pybind11-stubgen numpy
 
@@ -38,13 +38,13 @@ jobs:
       - name: Configure and Build with CMake
         run: |
           cmake -S . -B build -G "Visual Studio 17 2022" -A x64 -DPYTHON_EXECUTABLE="${GITHUB_WORKSPACE}\\.venv\\Scripts\\python.exe" -DPython_ROOT_DIR="${GITHUB_WORKSPACE}\\.venv"
-          cmake --build build --config Release  # 选择 Release 配置进行构建
+          cmake --build build --config Release
 
       # 打包构建产物
       - name: Package build artifacts
         run: |
           mkdir -p dist
-          xcopy /E /I build dist  # 复制构建结果到 dist 文件夹
+          xcopy /E /I build dist
 
       # 上传构建结果
       - name: Upload Artifact
