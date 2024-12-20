@@ -1,4 +1,4 @@
-name: Build and Release
+name: Build and Release in Windows
 
 on:
   push:
@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    runs-on: windows-2022
+    runs-on: windows-2022 # 使用 Windows 2022 镜像，适用于 MSVC 2022
 
     strategy:
       matrix:
@@ -25,6 +25,12 @@ jobs:
       - name: Initialize and update git submodules
         run: |
           git submodule update --init --recursive
+
+      # 安装 Python
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
 
       # 安装依赖（Windows 上的安装步骤，安装 Python 环境等）
       - name: Install dependencies and set up virtual environment
@@ -45,7 +51,6 @@ jobs:
         run: |
           mkdir -p dist
           xcopy /E /I build dist
-
       # 上传构建结果
       - name: Upload Artifact
         uses: actions/upload-artifact@v3
