@@ -1,0 +1,54 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - "v*" # 仅在推送标签时触发
+  workflow_dispatch: # 支持手动触发
+
+jobs:
+  build:
+    runs-on: windows-2022 # 使用 Windows 2022 镜像，适用于 MSVC 2022
+
+    strategy:
+      matrix:
+        python-version: ["3.8", "3.10"] # 只保留 Python 版本矩阵
+
+    steps:
+      # 检出代码
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive # 确保自动拉取子模块
+
+      # 初始化和更新子模块（额外保险步骤）
+      - name: Initialize and update git submodules
+        run: |
+          git submodule update --init --recursive
+
+      # 安装依赖（Windows 上的安装步骤，安装 Python 环境等）
+      - name: Install dependencies and set up virtual environment
+        run: |
+          python -m venv ${GITHUB_WORKSPACE}\.venv  # 在工作区创建虚拟环境
+          ${GITHUB_WORKSPACE}\.venv\Scripts\activate  # 激活虚拟环境
+          pip install --upgrade pip
+          pip install pybind11 pybind11-stubgen numpy
+
+      # 配置和构建项目（使用 MSVC 2022 编译器）
+      - name: Configure and Build with CMake
+        run: |
+          cmake -S . -B build -G "Visual Studio 17 2022" -A x64 -DPYTHON_EXECUTABLE=${GITHUB_WORKSPACE}\.venv\Scripts\python.exe -DPython_ROOT_DIR=${GITHUB_WORKSPACE}\.venv
+          cmake --build build --config Release  # 选择 Release 配置进行构建
+
+      # 打包构建产物
+      - name: Package build artifacts
+        run: |
+          mkdir -p dist
+          xcopy /E /I build dist  # 复制构建结果到 dist 文件夹
+
+      # 上传构建结果
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-windows-msvc-2022-py${{ matrix.python-version }}
+          path: dist/
