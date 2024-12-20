@@ -3,66 +3,65 @@ name: Build and Release
 on:
   push:
     tags:
-      - 'v*'  # 仅在推送标签时触发
-  workflow_dispatch:  # 支持手动触发
+      - "v*" # 仅在推送标签时触发
+  workflow_dispatch: # 支持手动触发
 
 jobs:
   build:
-    runs-on: ubuntu-20.04  # 仅在 ubuntu-20.04 上运行
+    runs-on: ubuntu-20.04 # 仅在 ubuntu-20.04 上运行
 
     strategy:
       matrix:
-        python-version: ["3.8", "3.10"]  # 只保留 Python 版本矩阵
+        python-version: ["3.8", "3.10"] # 只保留 Python 版本矩阵
 
     steps:
-    # 检出代码
-    - name: Checkout code
-      uses: actions/checkout@v3
-      with:
-        submodules: recursive  # 确保自动拉取子模块
+      # 检出代码
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive # 确保自动拉取子模块
 
-    # 初始化和更新子模块（额外保险步骤）
-    - name: Initialize and update git submodules
-      run: |
-        git submodule update --init --recursive
+      # 初始化和更新子模块（额外保险步骤）
+      - name: Initialize and update git submodules
+        run: |
+          git submodule update --init --recursive
 
-    # 安装 OpenGL 依赖 (仅针对 Ubuntu)
-    - name: Install OpenGL dependencies on Ubuntu
-      if: runner.os == 'Linux'
-      run: |
-        sudo apt update
-        sudo apt install -y libgl1-mesa-dev libglu1-mesa-dev mesa-utils freeglut3-dev wayland-protocols libwayland-dev libxkbcommon-dev libxi-dev
-        sudo apt install -y build-essential cmake pkg-config libgl1-mesa-dev libglu1-mesa-dev mesa-utils freeglut3-dev wayland-protocols libwayland-dev libx11-dev libxrandr-dev libxinerama-dev libxcursor-dev libxkbcommon-dev
+      # 安装 OpenGL 依赖 (仅针对 Ubuntu)
+      - name: Install OpenGL dependencies on Ubuntu
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt update
+          sudo apt install -y libgl1-mesa-dev libglu1-mesa-dev mesa-utils freeglut3-dev wayland-protocols libwayland-dev libxkbcommon-dev libxi-dev
+          sudo apt install -y build-essential cmake pkg-config libgl1-mesa-dev libglu1-mesa-dev mesa-utils freeglut3-dev wayland-protocols libwayland-dev libx11-dev libxrandr-dev libxinerama-dev libxcursor-dev libxkbcommon-dev
 
-    # 设置 Python 环境
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v4
-      with:
-        python-version: ${{ matrix.python-version }}
+      # 设置 Python 环境
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
 
-    # 创建虚拟环境并安装依赖
-    - name: Install dependencies and set up virtual environment
-      run: |
-        python -m venv .venv
-        source .venv/bin/activate  # 激活虚拟环境 for Ubuntu
-        pip install --upgrade pip
-        pip install pybind11 pybind11-stubgen
+      - name: Install dependencies and set up virtual environment
+        run: |
+          python -m venv ${GITHUB_WORKSPACE}/.venv
+          source ${GITHUB_WORKSPACE}/.venv/bin/activate
+          pip install --upgrade pip
+          pip install pybind11 pybind11-stubgen numpy
 
-    # 构建项目
-    - name: Configure and Build with CMake
-      run: |
-        cmake -S . -B build -DPYTHON_EXECUTABLE=$(which python)
-        cmake --build build
+      # 构建项目
+      - name: Configure and Build with CMake
+        run: |
+          cmake -S . -B build -DPYTHON_EXECUTABLE=${GITHUB_WORKSPACE}/.venv/bin/python -DPython_ROOT_DIR=${GITHUB_WORKSPACE}/.venv
+          cmake --build build
 
-    # 打包构建产物
-    - name: Package build artifacts
-      run: |
-        mkdir -p dist
-        cp -r build/* dist/
+      # 打包构建产物
+      - name: Package build artifacts
+        run: |
+          mkdir -p dist
+          cp -r build/* dist/
 
-    # 上传构建结果
-    - name: Upload Artifact
-      uses: actions/upload-artifact@v3
-      with:
-        name: build-ubuntu-20.04-py${{ matrix.python-version }}
-        path: dist/
+      # 上传构建结果
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-ubuntu-20.04-py${{ matrix.python-version }}
+          path: dist/

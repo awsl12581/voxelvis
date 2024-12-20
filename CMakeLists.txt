@@ -23,6 +23,7 @@ if(Python_FOUND)
 message(STATUS "python execture path: ${Python_EXECUTABLE}")
 message(STATUS "python include path : ${Python_INCLUDE_DIRS}")
 message(STATUS "python library path : ${Python_LIBRARIES}")
+message(STATUS "Python version: ${Python_VERSION}")
 include_directories(${Python_INCLUDE_DIRS})
 endif(Python_FOUND)
 
@@ -66,8 +67,14 @@ add_library(imgui STATIC ${IMGUI_SOURCE_FILES})
 if(MSVC)
     find_package(pybind11 REQUIRED PATHS "${Python_ROOT_DIR}/Lib/site-packages/pybind11")
 elseif(LINUX)
-    find_package(pybind11 REQUIRED PATHS "${Python_ROOT_DIR}/lib/python3.10/site-packages/pybind11")
+    # 使用字符串操作截取前两个版本号
+    string(REGEX MATCH "^([0-9]+\\.[0-9]+)" PYTHON_MAJOR_MINOR "${Python_VERSION}")
+
+    # 输出截取后的 Python 版本
+    message(STATUS "Python major and minor version: ${PYTHON_MAJOR_MINOR}")
+    find_package(pybind11 REQUIRED PATHS "${Python_ROOT_DIR}/lib/python${PYTHON_MAJOR_MINOR}/site-packages/pybind11")
 else()
+# win
     find_package(pybind11 REQUIRED PATHS "${Python_ROOT_DIR}/Lib/site-packages/pybind11")
 endif()
 
