@@ -109,11 +109,11 @@ endif(LINUX)
 # find_package(X11 REQUIRED)
 # x11
 
-if(LINUX)
-add_executable(my_app_x11 src/imgui_impl_x11_main.cpp src/imgui_impl_x11.cpp)
-target_link_libraries(my_app_x11 PRIVATE ${VOXELVIS_Libs})
-target_link_libraries(my_app_x11 PRIVATE Threads::Threads X11)
-endif(LINUX)
+# if(LINUX)
+# add_executable(my_app_x11 src/imgui_impl_x11_main.cpp src/imgui_impl_x11.cpp)
+# target_link_libraries(my_app_x11 PRIVATE ${VOXELVIS_Libs})
+# target_link_libraries(my_app_x11 PRIVATE Threads::Threads X11)
+# endif(LINUX)
 
 # 添加动态库
 # add_library(teavoxelui SHARED src/example.cpp)
