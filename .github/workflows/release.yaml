@@ -27,6 +27,13 @@ jobs:
       run: |
         git submodule update --init --recursive
 
+    # 安装 OpenGL 依赖 (针对 Ubuntu)
+    - name: Install OpenGL dependencies on Ubuntu
+      if: runner.os == 'Linux'
+      run: |
+        sudo apt update
+        sudo apt install -y libgl1-mesa-dev libglu1-mesa-dev mesa-utils freeglut3-dev wayland-protocols libwayland-dev
+
     # 设置 Python 环境
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v4
