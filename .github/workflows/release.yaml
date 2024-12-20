@@ -4,6 +4,7 @@ on:
   push:
     tags:
       - "v*" # 匹配以 "v" 开头的标签，例如 v1.0, v2.3.4
+  workflow_dispatch:
 
 jobs:
   build:
