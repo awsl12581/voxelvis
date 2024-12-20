@@ -3,8 +3,8 @@ name: Build and Release
 on:
   push:
     tags:
-      - "v*" # 匹配以 "v" 开头的标签，例如 v1.0, v2.3.4
-  workflow_dispatch:
+      - 'v*'  # 仅在推送标签时触发
+  workflow_dispatch:  # 支持手动触发
 
 jobs:
   build:
@@ -16,76 +16,50 @@ jobs:
         python-version: ["3.8", "3.10"]
 
     steps:
-      # 检出代码
-      - name: Checkout code
-        uses: actions/checkout@v3
+    # 检出代码
+    - name: Checkout code
+      uses: actions/checkout@v3
+      with:
+        submodules: recursive  # 确保自动拉取子模块
 
-      # 设置 Python 环境
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
-        with:
-          python-version: ${{ matrix.python-version }}
+    # 初始化和更新子模块（额外保险步骤）
+    - name: Initialize and update git submodules
+      run: |
+        git submodule update --init --recursive
 
-      # 安装依赖和创建虚拟环境
-      - name: Install dependencies
-        run: |
-          python -m venv .venv
-          source .venv/bin/activate  # Linux 和 MacOS 环境
-          pip install --upgrade pip
-          pip install pybind11 pybind11-stubgen
+    # 设置 Python 环境
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
 
-      # Windows 下激活虚拟环境（适用于 windows-latest）
-      - name: Activate venv on Windows
-        if: runner.os == 'Windows'
-        run: |
-          .venv\Scripts\activate.bat
-          pip install --upgrade pip
-          pip install pybind11 pybind11-stubgen
+    # 创建虚拟环境并安装依赖
+    - name: Install dependencies and set up virtual environment
+      run: |
+        python -m venv .venv
+        if [[ "$RUNNER_OS" == "Linux" ]]; then
+          source .venv/bin/activate  # 激活虚拟环境 for Linux
+        elif [[ "$RUNNER_OS" == "Windows" ]]; then
+          .venv\Scripts\activate.bat  # 激活虚拟环境 for Windows
+        fi
+        pip install --upgrade pip
+        pip install pybind11 pybind11-stubgen
 
-      # 构建项目
-      - name: Configure and Build with CMake
-        run: |
-          cmake -S . -B build -DPYTHON_EXECUTABLE=$(which python)
-          cmake --build build
+    # 构建项目
+    - name: Configure and Build with CMake
+      run: |
+        cmake -S . -B build -DPYTHON_EXECUTABLE=$(which python)
+        cmake --build build
 
-      # 打包构建产物
-      - name: Package build artifacts
-        run: |
-          mkdir -p dist
-          cp -r build/* dist/
+    # 打包构建产物
+    - name: Package build artifacts
+      run: |
+        mkdir -p dist
+        cp -r build/* dist/
 
-      # 上传构建结果
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: build-${{ matrix.os }}-py${{ matrix.python-version }}
-          path: dist/
-
-  release:
-    needs: build
-    runs-on: ubuntu-20.04
-    steps:
-      # 检出代码
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      # 创建 GitHub Release 并上传产物
-      - name: Create GitHub Release
-        uses: actions/create-release@v1
-        with:
-          tag_name: ${{ github.ref_name }}
-          release_name: Release ${{ github.ref_name }}
-          body: |
-            **Release Details:**
-            - OS: ${{ matrix.os }}
-            - Python: ${{ matrix.python-version }}
-          draft: false
-          prerelease: false
-
-      - name: Upload Build Artifacts to Release
-        uses: actions/upload-release-asset@v1
-        with:
-          upload_url: ${{ steps.create-release.outputs.upload_url }}
-          asset_path: dist/
-          asset_name: build-${{ matrix.os }}-py${{ matrix.python-version }}.zip
-          asset_content_type: application/zip
+    # 上传构建结果
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: build-${{ matrix.os }}-py${{ matrix.python-version }}
+        path: dist/
