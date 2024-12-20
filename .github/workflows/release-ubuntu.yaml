@@ -8,12 +8,11 @@ on:
 
 jobs:
   build:
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-20.04  # 仅在 ubuntu-20.04 上运行
 
     strategy:
       matrix:
-        os: [ubuntu-20.04, windows-latest]
-        python-version: ["3.8", "3.10"]
+        python-version: ["3.8", "3.10"]  # 只保留 Python 版本矩阵
 
     steps:
     # 检出代码
@@ -27,13 +26,14 @@ jobs:
       run: |
         git submodule update --init --recursive
 
-    # 安装 OpenGL 依赖 (针对 Ubuntu)
+    # 安装 OpenGL 依赖 (仅针对 Ubuntu)
     - name: Install OpenGL dependencies on Ubuntu
       if: runner.os == 'Linux'
       run: |
         sudo apt update
         sudo apt install -y libgl1-mesa-dev libglu1-mesa-dev mesa-utils freeglut3-dev wayland-protocols libwayland-dev libxkbcommon-dev
         sudo apt install -y build-essential cmake pkg-config libgl1-mesa-dev libglu1-mesa-dev mesa-utils freeglut3-dev wayland-protocols libwayland-dev libx11-dev libxrandr-dev libxinerama-dev libxcursor-dev libxkbcommon-dev
+
     # 设置 Python 环境
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v4
@@ -44,11 +44,7 @@ jobs:
     - name: Install dependencies and set up virtual environment
       run: |
         python -m venv .venv
-        if [[ "$RUNNER_OS" == "Linux" ]]; then
-          source .venv/bin/activate  # 激活虚拟环境 for Linux
-        elif [[ "$RUNNER_OS" == "Windows" ]]; then
-          .venv\Scripts\activate.bat  # 激活虚拟环境 for Windows
-        fi
+        source .venv/bin/activate  # 激活虚拟环境 for Ubuntu
         pip install --upgrade pip
         pip install pybind11 pybind11-stubgen
 
@@ -68,5 +64,5 @@ jobs:
     - name: Upload Artifact
       uses: actions/upload-artifact@v3
       with:
-        name: build-${{ matrix.os }}-py${{ matrix.python-version }}
+        name: build-ubuntu-20.04-py${{ matrix.python-version }}
         path: dist/
