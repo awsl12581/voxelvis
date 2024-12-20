@@ -29,15 +29,15 @@ jobs:
       # 安装依赖（Windows 上的安装步骤，安装 Python 环境等）
       - name: Install dependencies and set up virtual environment
         run: |
-          python -m venv ${GITHUB_WORKSPACE}\.venv  # 在工作区创建虚拟环境
-          ${GITHUB_WORKSPACE}\.venv\Scripts\activate  # 激活虚拟环境
+          python -m venv "${GITHUB_WORKSPACE}\\.venv"  # 在工作区创建虚拟环境
+          "${GITHUB_WORKSPACE}\\.venv\\Scripts\\activate"  # 激活虚拟环境
           pip install --upgrade pip
           pip install pybind11 pybind11-stubgen numpy
 
       # 配置和构建项目（使用 MSVC 2022 编译器）
       - name: Configure and Build with CMake
         run: |
-          cmake -S . -B build -G "Visual Studio 17 2022" -A x64 -DPYTHON_EXECUTABLE=${GITHUB_WORKSPACE}\.venv\Scripts\python.exe -DPython_ROOT_DIR=${GITHUB_WORKSPACE}\.venv
+          cmake -S . -B build -G "Visual Studio 17 2022" -A x64 -DPYTHON_EXECUTABLE="${GITHUB_WORKSPACE}\\.venv\\Scripts\\python.exe" -DPython_ROOT_DIR="${GITHUB_WORKSPACE}\\.venv"
           cmake --build build --config Release  # 选择 Release 配置进行构建
 
       # 打包构建产物
