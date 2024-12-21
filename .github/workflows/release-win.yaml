@@ -45,7 +45,7 @@ jobs:
       # 配置和构建项目（使用 MSVC 2022 编译器）
       - name: Configure and Build with CMake
         run: |
-          cmake -S . -B build -G Ninja -A x64 -DPYTHON_EXECUTABLE="${GITHUB_WORKSPACE}/.venv/Scripts/python.exe" -DPython_ROOT_DIR="${GITHUB_WORKSPACE}/.venv"
+          cmake -S . -B build -G Ninja -DPYTHON_EXECUTABLE="${GITHUB_WORKSPACE}/.venv/Scripts/python.exe" -DPython_ROOT_DIR="${GITHUB_WORKSPACE}/.venv"
           cmake --build build --config Release
 
       # 打包构建产物
