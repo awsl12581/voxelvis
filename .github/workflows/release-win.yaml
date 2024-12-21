@@ -42,24 +42,11 @@ jobs:
       - name: Install Ninja via Chocolatey
         run: choco install ninja --confirm
 
-      - name: Set up MSVC environment
-        shell: pwsh
-        run: |
-          $vswhere = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
-          if (!(Test-Path $vswhere)) {
-            throw "vswhere.exe not found!"
-          }
-          $vsvars = (& $vswhere -latest -prerelease -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath) + "\VC\Auxiliary\Build\vcvars64.bat"
-          & cmd /c "`"$vsvars`" && set" | Out-String | ForEach-Object {
-            if ($_ -match "^(.*?)=(.*)$") {
-              Set-Item -Path env:$($matches[1]) -Value $($matches[2])
-            }
-          }
-
       # 配置和构建项目（使用 MSVC 2022 编译器）
       - name: Configure and Build with CMake
+        uses: ilammy/msvc-dev-cmd@v1
         run: |
-          cmake -S . -B build -G Ninja -DCMAKE_C_COMPILER="cl.exe" -DCMAKE_CXX_COMPILER="cl.exe" -DPYTHON_EXECUTABLE="${GITHUB_WORKSPACE}/.venv/Scripts/python.exe" -DPython_ROOT_DIR="${GITHUB_WORKSPACE}/.venv"
+          cmake -S . -B build -G Ninja -DPYTHON_EXECUTABLE="${GITHUB_WORKSPACE}/.venv/Scripts/python.exe" -DPython_ROOT_DIR="${GITHUB_WORKSPACE}/.venv"
           cmake --build build --config Release
 
       # 打包构建产物
