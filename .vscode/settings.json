@@ -93,7 +93,9 @@
         "./build"
     ],
     "cmake.outputLogEncoding": "gbk",
+    "cmake.configureSettings": {
+        "Python_ROOT_DIR": "${workspaceFolder}/.venv"
+    },
     "C_Cpp.intelliSenseEngine": "default",
     "trailing-spaces.trimOnSave": true
-
 }
