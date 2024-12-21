@@ -32,13 +32,13 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
-      # 安装依赖（Windows 上的安装步骤，安装 Python 环境等）
       - name: Install dependencies and set up virtual environment
         run: |
           python -m venv "${GITHUB_WORKSPACE}\\.venv"
-          "${GITHUB_WORKSPACE}\\.venv\\Scripts\\activate"
+          . "${GITHUB_WORKSPACE}\\.venv\\Scripts\\Activate.ps1"
           pip install --upgrade pip
           pip install pybind11 pybind11-stubgen numpy
+        shell: pwsh
 
       # 配置和构建项目（使用 MSVC 2022 编译器）
       - name: Configure and Build with CMake
