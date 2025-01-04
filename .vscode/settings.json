@@ -86,7 +86,8 @@
         "csignal": "cpp",
         "span": "cpp",
         "codecvt": "cpp",
-        "queue": "cpp"
+        "queue": "cpp",
+        "stack": "cpp"
     },
     "python.analysis.autoImportCompletions": true,
     "python.analysis.extraPaths": [

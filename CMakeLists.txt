@@ -43,6 +43,8 @@ set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 set(GLM_ENABLE_CXX_17 ON CACHE BOOL "" FORCE)
 # test
 # add_subdirectory(tests)
+# yaml-cpp
+add_subdirectory(3rdparty/yaml-cpp)
 # glfw
 add_subdirectory(3rdparty/glfw)
 # glad
@@ -87,6 +89,7 @@ set(VOXELVIS_Libs OpenGL::GL glfw glad glm::glm ${Python_LIBRARIES} imgui)
 ########################################################################
 
 include_directories(src)
+include_directories(3rdparty/libnpy/include)
 
 # 不要在库编译前设置，除非必须，直接在项目编译前加即可
 if(MSVC AND NOT CMAKE_CXX_COMPILER_ID MATCHES "Clang")
@@ -111,6 +114,7 @@ set(Vis_Source_Files
 add_executable(my_app main.cpp ${Vis_Source_Files})
 # TODO 彻底搞清public private
 target_link_libraries(my_app PRIVATE ${VOXELVIS_Libs})
+target_link_libraries(my_app PRIVATE yaml-cpp::yaml-cpp)
 if(LINUX)
 target_link_libraries(my_app PRIVATE Threads::Threads)
 endif(LINUX)
@@ -133,6 +137,10 @@ endif()
 # cmake方式打包pybind11
 pybind11_add_module(teavoxelui bind/lib_bind.cpp ${Vis_Source_Files})
 target_include_directories(teavoxelui PRIVATE ${CMAKE_SOURCE_DIR})
+#FIXME 有问题，pybind11链接debug不起作用
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    target_compile_definitions (teavoxelui INTERFACE Py_DEBUG)
+endif()
 # TODO target_link_libraries的用处为什么会联系上include
 target_link_libraries(teavoxelui PRIVATE ${VOXELVIS_Libs})
 if(LINUX)

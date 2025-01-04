@@ -1,11 +1,11 @@
 /*
   This file is part of the C++ CmdParser utility.
   Copyright (c) 2015 - 2019 Florian Rappl
-  See:
-  https://github.com/FlorianRappl/CmdParser
+  See: https://github.com/FlorianRappl/CmdParser
 */
 
 #pragma once
+
 #include <functional>
 #include <iostream>
 #include <sstream>
