@@ -6,3 +6,4 @@ out
 imgui.ini
 datasets
 .cache
+*.mp4

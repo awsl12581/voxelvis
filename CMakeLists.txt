@@ -18,7 +18,8 @@ message(STATUS "CMAKE_SOURCE_DIR: ${CMAKE_SOURCE_DIR}")
 # opengl 460
 find_package(OpenGL REQUIRED)
 # python3.8 python1.24.4
-option(Python_ROOT_DIR "Path to the Python root directory" "${CMAKE_SOURCE_DIR}/.venv")
+set(Python_ROOT_DIR "${CMAKE_SOURCE_DIR}/.venv" CACHE STRING "Python envs path")
+# option(Python_ROOT_DIR "Path to the Python root directory" "${CMAKE_SOURCE_DIR}/.venv")
 find_package(Python COMPONENTS Interpreter Development NumPy)
 if(Python_FOUND)
 message(STATUS "python execture path: ${Python_EXECUTABLE}")
@@ -88,10 +89,10 @@ set(VOXELVIS_Libs OpenGL::GL glfw glad glm::glm ${Python_LIBRARIES} imgui)
 include_directories(src)
 
 # 不要在库编译前设置，除非必须，直接在项目编译前加即可
-if(MSVC)
+if(MSVC AND NOT CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     add_compile_options("/source-charset:utf-8")
     add_compile_options("/execution-charset:gbk")
-endif(MSVC)
+endif()
 
 if(LINUX)
 find_package(Threads REQUIRED)
