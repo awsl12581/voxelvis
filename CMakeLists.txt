@@ -131,7 +131,8 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
 # cmake方式打包pybind11
-pybind11_add_module(teavoxelui example.cpp ${Vis_Source_Files})
+pybind11_add_module(teavoxelui bind/lib_bind.cpp ${Vis_Source_Files})
+target_include_directories(teavoxelui PRIVATE ${CMAKE_SOURCE_DIR})
 # TODO target_link_libraries的用处为什么会联系上include
 target_link_libraries(teavoxelui PRIVATE ${VOXELVIS_Libs})
 if(LINUX)

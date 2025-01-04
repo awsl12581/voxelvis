@@ -3,7 +3,7 @@ from typing import Tuple
 import sys
 from time import sleep
 
-sys.path.append("./build")
+sys.path.append("../build")
 
 from teavoxelui import (
     TeaVis,

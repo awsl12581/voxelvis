@@ -2,3 +2,10 @@
 2. 添加x11远程转发 搞定
 3. glviewport只针对与当前的视口，和glfw无关，但需要适配glfw，这个不应该在主程序中调整，应该在实例中调整
 4. 添加3D-box框体
+5. 调整的selfocc那种展示模式，主要分为训练时叫Debug、展示时叫Test，录制视频时叫Record三种模式
+- Debug模式：显示所有的信息
+imgui信息包含epoch次数、显示场景、损失率
+窗口信息分为模式选择，包含OCC模式、Seg模式、Depth模式、点云模式，分别展示不同内容，通过imgui面板切换
+- Test模式：只显示OCC
+- Record模式：显示所有信息，但不显示imgui信息，重拍布glviewport数据
+6.停靠窗口的位置调整
