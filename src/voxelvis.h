@@ -80,6 +80,8 @@ private:
      */
     int windows_imgui_init();
 
+    void renderDockingSpace();
+
     /**
      * @brief 事件循环
      *

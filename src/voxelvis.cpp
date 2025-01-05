@@ -86,6 +86,9 @@ int vis::voxel::display_vox::windows_imgui_init()
     ImGui_ImplGlfw_InitForOpenGL(this->m_window, true);
     ImGui_ImplOpenGL3_Init(glsl_version);
 
+    ImGuiIO& io = ImGui::GetIO();
+    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+
     // std::cout << "设置 IMGUI 字体";
     // ImGuiIO &io = ImGui::GetIO();
     // io.Fonts->AddFontFromFileTTF(
@@ -94,6 +97,39 @@ int vis::voxel::display_vox::windows_imgui_init()
     //     NULL,
     //     io.Fonts->GetGlyphRangesChineseFull());
     return windows_close(0);
+}
+
+void vis::voxel::display_vox::renderDockingSpace()
+{
+    // 确保 ImGui 的窗口开始绘制
+    ImGui::Begin("Main Docking Space", nullptr, ImGuiWindowFlags_NoDocking);
+
+    // 获取当前窗口的可用区域并设置 Docking 空间
+    ImGuiViewport* viewport = ImGui::GetMainViewport();
+    ImGui::SetNextWindowPos(viewport->WorkPos);
+    ImGui::SetNextWindowSize(viewport->WorkSize);
+    ImGui::SetNextWindowViewport(viewport->ID);
+
+    // 创建主窗口的标志：无标题栏、无背景、不被移动
+
+    ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoTitleBar |
+                                    ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
+                                    ImGuiWindowFlags_NoBackground | // 无背景
+                                    ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+
+    // 开始绘制主窗口
+    ImGui::Begin("MainDockSpace", nullptr, window_flags);
+    ImGui::PopStyleVar(3);
+
+    // 创建 Docking 空间
+    ImGuiID dockspace_id = ImGui::GetID("MainDockSpace");
+    ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_PassthruCentralNode);
+
+    ImGui::End();
+    ImGui::End();
 }
 
 void vis::voxel::display_vox::loop()
@@ -133,6 +169,8 @@ void vis::voxel::display_vox::loop()
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
+
+        renderDockingSpace();
 
         // 设置ImGuizmo的操作模式
         // ImGuizmo::BeginFrame();
