@@ -105,6 +105,7 @@ std::vector<vis::voxel::voxel_cofig>*
     std::vector<unsigned long> shape = d.shape;
     bool fortran_order = d.fortran_order;
 
+    assert(shape.size() == 3);
     for (size_t i = 0; i < shape.size(); i++) {
         std::cout << "shape[" << i << "]: " << shape[i] << std::endl;
     }

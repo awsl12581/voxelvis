@@ -137,10 +137,6 @@ endif()
 # cmake方式打包pybind11
 pybind11_add_module(teavoxelui bind/lib_bind.cpp ${Vis_Source_Files})
 target_include_directories(teavoxelui PRIVATE ${CMAKE_SOURCE_DIR})
-#FIXME 有问题，pybind11链接debug不起作用
-if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-    target_compile_definitions (teavoxelui INTERFACE Py_DEBUG)
-endif()
 # TODO target_link_libraries的用处为什么会联系上include
 target_link_libraries(teavoxelui PRIVATE ${VOXELVIS_Libs})
 if(LINUX)
