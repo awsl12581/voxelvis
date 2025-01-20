@@ -18,7 +18,7 @@ message(STATUS "CMAKE_SOURCE_DIR: ${CMAKE_SOURCE_DIR}")
 # opengl 460
 find_package(OpenGL REQUIRED)
 # python3.8 python1.24.4
-set(Python_ROOT_DIR "${CMAKE_SOURCE_DIR}/.venv" CACHE STRING "Python envs path")
+set(Python_ROOT_DIR "${CMAKE_SOURCE_DIR}/.conda" CACHE STRING "Python envs path" FORCE)
 # option(Python_ROOT_DIR "Path to the Python root directory" "${CMAKE_SOURCE_DIR}/.venv")
 find_package(Python COMPONENTS Interpreter Development NumPy)
 if(Python_FOUND)

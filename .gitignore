@@ -7,3 +7,4 @@ imgui.ini
 datasets
 .cache
 *.mp4
+.conda
